@@ -1,0 +1,20 @@
+Package: findGSEX
+Type: Package
+Title: Estimate genome size of polyploid species using k-mer frequencies
+Version: 1.2.0
+Author: Laiyi Fu & Hequan Sun
+Maintainer: Laiyi Fu <fulaiyi321@163.com>
+Description: Standalone version of findGSEX.
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+Imports:
+  scales,
+  png,
+  dplyr,
+  RColorBrewer,
+  pracma,
+  ggplot2,
+  fGarch 
+Depends: R(>= 4.2.0)
+RoxygenNote: 7.3.1
