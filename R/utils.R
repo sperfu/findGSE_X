@@ -1,5 +1,4 @@
-
-error_minimize_raw<-function(tooptimize, x, end, xfit, xfit_left, xfit_right, d, min_valid_pos, itr)
+error_minimize<-function(tooptimize, x, end, xfit, xfit_left, xfit_right, d, min_valid_pos, itr)
 {
   # x            : histogram replicated from d, which is formed from dr
   # xfit         : x-values to get the skew normal distribution
@@ -16,17 +15,23 @@ error_minimize_raw<-function(tooptimize, x, end, xfit, xfit_left, xfit_right, d,
   meanfit            <- mean(x[x>=xfit_left & x<=xfit_right])*mean_scale_factor
   sdfit              <- sd(x[  x>=xfit_left & x<=xfit_right])*sd_scale_factor
   xifit              <- 1*xi_scale_factor
-  #cat(paste("   Info: initialized mean as ", meanfit, "\n", sep=""))
-  #cat(paste("   Info: initialized sd   as ", sdfit, "\n", sep=""))
+  # cat(paste("   Info: initialized mean as ", meanfit, "\n", sep=""))
+  # cat(paste("   Info: initialized sd   as ", sdfit, "\n", sep=""))
   #cat(paste("   Info: initialized skew as ", xifit, "\n", sep=""))
-  # yfit               <- dsnorm(xfit,mean=meanfit,sd=sdfit, xi=xifit)*yfit_scale_factor*length(x)
- yfit               <- dnorm(xfit,mean=meanfit,sd=sdfit)*yfit_scale_factor*length(x)
+  #yfit               <- dsnorm(xfit,mean=meanfit,sd=sdfit, xi=xifit)*yfit_scale_factor*length(x)
+  yfit               <- dnorm(xfit,mean=meanfit,sd=sdfit)*yfit_scale_factor*length(x)
   diff0              <- sqrt(sum((d[min_valid_pos:end, 2] - yfit[min_valid_pos:end])^2))
+  #diff0              <- sqrt(sum((d[xfit_left:end, 2] - yfit[xfit_left:end])^2))
+  # cat(paste("   111 Info: initialized min_valid_pos   as ", min_valid_pos, "\n", sep=""))
+  # cat(paste("   111 Info: initialized end as ", end, "\n", sep=""))
+  # cat(paste("   111 Info: initialized x_fit_left   as ", xfit_left, "\n", sep=""))
+  # cat(paste("   111 Info: initialized x_fit_right as ", xfit_right, "\n", sep=""))
+  # diff0              <- sqrt(sum((d[xfit_left:xfit_right, 2] - yfit[xfit_left:xfit_right])^2))
   #
   return(diff0)
 }
 # function for tunning final fitting if heterozgyous genomes
-error_minimize2_raw<-function(tooptimize, h_het, h_hom, h_target)
+error_minimize2<-function(tooptimize, h_het, h_hom, h_target)
 {
   # h_het   : raw fitting for the heterozygous region
   # h_hom   : raw fitting for the homozygous   region
@@ -39,7 +44,7 @@ error_minimize2_raw<-function(tooptimize, h_het, h_hom, h_target)
   return(diff2)
 }
 ## function for minimizing difference from remainder kmer-freq dr: mean, sd, and scaling factor ##
-error_minimize3_raw<-function(tooptimize, x, end, xfit_left, xfit_right, d, min_valid_pos, itr)
+error_minimize3<-function(tooptimize, x, end, xfit_left, xfit_right, d, min_valid_pos, itr, meanfit, sdfit)
 {
   # x            : histogram
   # xfit         : x-values to get the normal distribution
@@ -48,19 +53,25 @@ error_minimize3_raw<-function(tooptimize, x, end, xfit_left, xfit_right, d, min_
   # d            : the observed kmer-freq that will be fitted
   # min_valid_pos: a left-side  position, from which the observed kmer-freq will be fitted
   # end          : a rigth-side position, till which the observed kmer-freq will be fitted
-  sd_scale_factor    <- tooptimize[1]
+  #sd_scale_factor    <- tooptimize[1]
   yfit_scale_factor  <- tooptimize[2]*100000/itr
-  mean_scale_factor  <- tooptimize[3]
+  # mean_scale_factor  <- tooptimize[3]
   xfit               <- seq(min(x),max(x),length=end)
-  meanfit            <- mean(x[x>=xfit_left & x<=xfit_right])*mean_scale_factor
-  sdfit              <- sd(x[  x>=xfit_left & x<=xfit_right])*sd_scale_factor
+  # meanfit            <- mean(x[x>=xfit_left & x<=xfit_right])*mean_scale_factor
+  #sdfit              <- sd(x[  x>=xfit_left & x<=xfit_right])*sd_scale_factor
   yfit               <- dnorm(xfit,mean=meanfit,sd=sdfit)*yfit_scale_factor*length(x)
   diff0              <- sqrt(sum((d[min_valid_pos:end, 2] - yfit[min_valid_pos:end])^2))
+  # cat(paste("   111 Info: initialized min_valid_pos   as ", min_valid_pos, "\n", sep=""))
+  # cat(paste("   111 Info: initialized end as ", end, "\n", sep=""))
+  # cat(paste("   111 Info: initialized x_fit_left   as ", xfit_left, "\n", sep=""))
+  # cat(paste("   111 Info: initialized x_fit_right as ", xfit_right, "\n", sep=""))
+  # diff0              <- sqrt(sum((d[xfit_left:xfit_right, 2] - yfit[xfit_left:xfit_right])^2))
+  #diff0              <- sqrt(sum((d[xfit_left:end, 2] - yfit[xfit_left:end])^2))
   #
   return(diff0)
 }
 # recover count 0: in initial count, making kmer freq consecutive.
-initial_count_recover_raw <- function(d0)
+initial_count_recover <- function(d0)
 {
   # dr: the initial kmer count from softwares like jellyfish
   dr <- cbind(1:d0[length(d0[,1]), 1], rep(0, d0[length(d0[,1]), 1]))
@@ -73,7 +84,7 @@ initial_count_recover_raw <- function(d0)
   return (dr)
 }
 # modify kmer freq before fitting
-kmer_count_modify_raw <- function(start, end, left_right, histx)
+kmer_count_modify <- function(start, end, left_right, histx)
 {
   # start or end does not include the peak position
   # modify rigth part according to left
@@ -92,9 +103,8 @@ kmer_count_modify_raw <- function(start, end, left_right, histx)
   }
   return (histx)
 }
-#
 
-findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
+findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploidy_ind=2,avg_cov = 0,left_fit_ratio = 0.835, meanfit_old = 0, sdfit_old = 0, scale_flag = FALSE)
 {
   # initial values
   if(missing(histo))
@@ -106,15 +116,17 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
     stop(paste("Cannot find sizek info: ", sizek, ". Program exited.\n",sep=""))
   }
   # defaults
+  cat('ploidy index start: ',ploidy_ind,'\n')
   if(missing(exp_hom))  exp_hom <- 0
   if(missing(outdir))   outdir  <- getwd()
   ######################################## libararies required ###############################################
+  #cat("\n special version: \n")
   # find all peaks in a time series
   suppressWarnings(suppressMessages(library("pracma")))
   # provide skew normal distrbution fitting (dsnorm(...))
   suppressWarnings(suppressMessages(library("fGarch")))
-  ## version id: output het fitting values
-  vers <- 'v1.95.'
+  ## version id
+  vers <- 'v1.94.'
   ##
   cat("\nfindGSE initialized...\n")
   ## running time
@@ -151,10 +163,10 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
   {
     path <- getwd()
   }else
-  if(path == "")
-  {
-     path         <- dirname(normalizePath(countingfile))
-  }
+    if(path == "")
+    {
+      path         <- dirname(normalizePath(countingfile))
+    }
   path_set       <- T
   cat(paste("   Info: output folder set as ", path, "\n", sep=""))
   #
@@ -162,15 +174,16 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
   # expected maximum value for the hom k-mer peak! set as fpeak~2*fpeak
   exp_hom_cov_max <- exp_hom
   cat(paste("   Info: expected coverage of homozygous k-mers set as ", exp_hom_cov_max, "\n", sep=""))
+  exp_hom_cov_max_save <- exp_hom_cov_max
   # derived  maximum value for the het k-mer peak!
   der_het_cov_max <- 0
   ## if output folder does not exist, create it; if existing, give a warning.
-  dir.create(file.path(path), showWarnings = T)
+  dir.create(file.path(path), showWarnings = F)
   if(exp_hom_cov_max > 0)
   {
     het_observed      <- T
     # derived  maximum value for the het k-mer peak.
-    der_het_cov_max   <- round(0.5*exp_hom_cov_max);
+    der_het_cov_max   <- round(ploidy_ind/(ploidy_ind+1)*exp_hom_cov_max);
     cat(paste("   Info: het observed set as true ==> heterozygous fitting asked. \n", sep=""))
     if(het_fitting_delta != 0.11)
     {
@@ -226,7 +239,7 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
       {
         dhet   <- read.table(countingfile)
         ## recover positions in dr whose initial counts are 0
-        dr     <- initial_count_recover_raw(dhet[1:length(dhet[,1]),])
+        dr     <- initial_count_recover(dhet[1:length(dhet[,1]),])
         rm("dhet")
         dhet   <- dr
         # if heterozygosity oberved in k-mer freq,
@@ -244,6 +257,7 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
           cat(paste("    Size ", sizek , " fitting for het k-mers \n", sep=""));
           # find hom and het peaks (if any).
           peaks    <- findpeaks(error[2:exp_hom_cov_max, 2])
+          #peaks    <- filter_peaks(tmp_peaks, dhet)
           if(length(peaks) == 0)
           {
             plot(dhet[, 1], dhet[, 2],
@@ -261,10 +275,23 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
           }
           hom_peak_pos <- 0
           het_peak_pos <- 0
-          hom_peak_pos <- peaks[which.max(peaks[,1]), 2]+1   # hom peak
-          peaks[which.max(peaks[,1]), 1] <- 0
-          het_peak_pos <- peaks[which.max(peaks[,1]), 2]+1   # het peak
-          peaks[which.max(peaks[,1]), 1] <- 0
+          cat('enter ploidy equal to ',ploidy_ind)
+          if(ploidy_ind == 1){
+            hom_peak_pos <- peaks[which.max(peaks[,1]), 2]+1   # hom peak
+            peaks[which.max(peaks[,1]), 1] <- 0
+            het_peak_pos <- peaks[which.max(peaks[,1]), 2]+1   # het peak
+            peaks[which.max(peaks[,1]), 1] <- 0
+          }else if(ploidy_ind == 10){
+
+            het_peak_pos <- 462 #ploidy_ind * avg_cov
+            hom_peak_pos <- 615 #(ploidy_ind + 1) * avg_cov
+          }
+          else{
+            het_peak_pos <- ploidy_ind * avg_cov
+            hom_peak_pos <- (ploidy_ind + 1) * avg_cov
+          }
+          cat('hom_peak_pos is: ',hom_peak_pos,'\n')
+          cat('het_peak_pos is: ',het_peak_pos,'\n')
           # if two peaks found, the larger one is hom; the other is het
           if(het_peak_pos > hom_peak_pos)
           {
@@ -282,7 +309,7 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
             if (round(ratio)<1.5) # nearly equal
             {
               hom_peak_pos <- max(hom_peak_pos, het_peak_pos)
-              het_peak_pos <- max(hom_peak_pos, het_peak_pos)
+              het_peak_pos <- min(hom_peak_pos, het_peak_pos)
             }
           }
           # if one peak  found, need to check if it is hom or het accordingly
@@ -293,7 +320,7 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
             unkownpeak    <- het_peak_pos
             if(unkownpeak >  der_het_cov_max)
             {
-              het_peak_pos      <- round(0.5*hom_peak_pos)
+              het_peak_pos      <- round(ploidy_ind/(ploidy_ind+1)*hom_peak_pos)
               cat("    Warning: only one peak in k-mer freq with given -exp_hom,
                   determined as hom-peak!\n")
               cat("            -exp_hom needs to be increased
@@ -302,7 +329,7 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
             }else
               if(unkownpeak  < der_het_cov_max)
               {
-                hom_peak_pos      <- 2*het_peak_pos
+                hom_peak_pos      <- (ploidy_ind+1)/ploidy_ind*het_peak_pos
                 cat("    Warning: only one peak in k-mer freq with given -exp_hom,
                     determined as het-peak!\n")
                 cat("          -exp_hom needs to be decreased
@@ -328,45 +355,83 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
           }
           cat('    Info: het_peak_pos for het fitting: ', het_peak_pos, '\n')
           cat('    Info: hom_peak_pos for hom fitting: ', hom_peak_pos, '\n')
+          het_peak_pos_save <- het_peak_pos
+          hom_peak_pos_save <- hom_peak_pos
           het_min_valid_pos <- which.min(error[1:het_peak_pos, 2])
-          # fit het distribution
-          het_xfit_left     <- max(min(het_min_valid_pos, het_peak_pos-10), 3)        # update on 20200129
-          if(het_peak_pos   > 80)
-          {
-            het_xfit_left  <- floor(het_xfit_left+het_peak_pos*0.1473684)
+          if(ploidy_ind == 1){
+            # fit het distribution
+            het_xfit_left     <- max(min(het_min_valid_pos, het_peak_pos-10), 3)        # update on 20200129
+            if(het_peak_pos   > 80)
+            {
+              het_xfit_left  <- floor(het_xfit_left+het_peak_pos*0.1473684)
+            }
+            het_xfit_right   <- het_peak_pos + round(0.5*(hom_peak_pos-het_peak_pos))   # update on 20200129
+            if(het_peak_pos   > 80)
+            {
+              het_xfit_right <- floor(het_xfit_right-het_peak_pos*0.1473684)
+            }
+          }else if(ploidy_ind == 10){
+
+            het_xfit_left <- 350 #ploidy_ind * avg_cov
+            het_xfit_right <- 650 #(ploidy_ind + 1) * avg_cov
           }
-          het_xfit_right   <- het_peak_pos + round(0.5*(hom_peak_pos-het_peak_pos))   # update on 20200129
-          if(het_peak_pos   > 80)
-          {
-            het_xfit_right <- floor(het_xfit_right-het_peak_pos*0.1473684)
+          else{
+            het_xfit_left <- het_peak_pos * left_fit_ratio  # 0.85  0.83
+            het_xfit_right <- het_peak_pos * 1.15  # 1.15  1.13
           }
-          cat('    Info: het_xfit_left  for het fitting: ', het_xfit_left, '\n')
-          cat('    Info: het_xfit_right for het fitting: ', het_xfit_right, '\n')
           if(het_xfit_right > het_peak_pos-1 - het_xfit_left + het_peak_pos-1)
           {
             het_xfit_right  <- het_peak_pos-1 - het_xfit_left + het_peak_pos-1
           }
-          histx2    <- kmer_count_modify_raw(het_xfit_left, het_peak_pos-1, 0, error)
+          histx2    <- kmer_count_modify(het_xfit_left, het_peak_pos-1, 0, error)
           x         <- rep(1:het_xfit_right,ceiling(abs(histx2[1:het_xfit_right,2])/(100000/1)))
           xfit      <- seq(min(x),max(x),length=het_xfit_right)
           # optimizing parameters
-          v<-optim(par=c(1, 1, 1, 0.8),
-                   fn=error_minimize_raw, x=x, end=het_xfit_right, xfit=xfit,
-                   xfit_left=het_xfit_left, xfit_right=het_xfit_right,
-                   d=histx2, min_valid_pos=het_min_valid_pos, itr=1)
-          #
-          # scale and correct yfit with optimized values in v$par
-          xfit2     <- seq(0.01,selected,0.01)
-          meanfit   <- mean(x[x>=het_xfit_left & x<=het_xfit_right])*v$par[3]
+          cat('    Info: het_xfit_left  for het fitting: ', het_xfit_left, '\n')
+          cat('    Info: het_xfit_right for het fitting: ', het_xfit_right, '\n')
+          het_xfit_right_save <- het_xfit_right
+          if(ploidy_ind == 1 || scale_flag == TRUE){
+            v<-optim(par=c(1, 1, 1, 0.8),
+                     fn=error_minimize, x=x, end=het_xfit_right, xfit=xfit,
+                     xfit_left=het_xfit_left, xfit_right=het_xfit_right,
+                     d=histx2, min_valid_pos=het_min_valid_pos, itr=1)
+            #
+            # scale and correct yfit with optimized values in v$par
+            xfit2     <- seq(0.01,selected,0.01)
+
+            meanfit   <- mean(x[x>=het_xfit_left & x<=het_xfit_right])*v$par[3]
+            meanfit_old <- meanfit
+            cat('first meanfit_old: ',meanfit_old,' \n')
+            sdfit     <- sd(x[  x>=het_xfit_left & x<=het_xfit_right])*v$par[1] # raw sd
+            sdfit_old <- sdfit
+
+          }
+          else if (scale_flag == FALSE){
+            meanfit <- meanfit_old * ploidy_ind
+            sdfit <- sdfit_old + sdfit_old*max(ploidy_ind - 1, 0)*0.1
+            #sdfit <- max(sdfit, 7.6)
+            cat('meanfit for ploidy: ',ploidy_ind,' is: ',meanfit,'\n')
+            v<-optim(par=c(1, 1, 1, 0.8),
+                     fn=error_minimize3, x=x, end=het_xfit_right,
+                     xfit_left=het_xfit_left, xfit_right=het_xfit_right,
+                     d=histx2, min_valid_pos=het_min_valid_pos, itr=1, meanfit = meanfit, sdfit = sdfit_old)
+            #
+            cat('optimize done...\n')
+            # scale and correct yfit with optimized values in v$par
+            xfit2     <- seq(0.01,selected,0.01)
+            #meanfit <- meanfit_old * ploidy_ind
+          }
+
           if(meanfit < 0)
           {
             cat(paste("    Warning: data does not follow
                       assumed distribution anymore; fitting stopped.\n", sep=""))
           }
-          sdfit     <- sd(x[  x>=het_xfit_left & x<=het_xfit_right])*v$par[1] # raw sd
+          # sdfit     <- sd(x[  x>=het_xfit_left & x<=het_xfit_right])*v$par[1] # raw sd
           #
           xifit     <- 1*v$par[4];
-          # yfit0     <- dsnorm(xfit2,mean=meanfit,sd=sdfit, xi=xifit)*(100000/1)*v$par[2]*length(x)
+          #yfit0     <- dsnorm(xfit2,mean=meanfit,sd=sdfit, xi=xifit)*(100000/1)*v$par[2]*length(x)
+          cat('sdfit is: ',sdfit,'\n')
           yfit0     <- dnorm(xfit2,mean=meanfit,sd=sdfit)*(100000/1)*v$par[2]*length(x)
           #
           ## scale fitting according to observation
@@ -404,7 +469,7 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
         maxright4fit <- min(10000,length(dr[,1]))
         # set the number of total iterations corresponding
         #     to raw count given by softwares such as jellyfish
-        totalitr     <- 10
+        totalitr     <- 2
         myitr        <-  0
         myyfit       <-  0
         homfit       <-  0
@@ -444,7 +509,7 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
                 peaks           <- findpeaks(error[3:selected, 2])
                 peaks[,2:4]     <- peaks[,2:4]+2
                 ## new on 2017-09-16
-                peaks           <- filter_peaks_raw(peaks, error)
+                peaks           <- filter_peaks(peaks, error)
                 ## end 2017-09-16
                 border_pos      <- peaks[1, 3]          # caution: peaks[peakindex, 3]
               }
@@ -454,13 +519,14 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
               original_peal_val <- peaks[peakindex, 1]
               if(het_observed && only_one_het_peak)
               {
-                original_peak_pos <- 2*het_peak_pos
+                original_peak_pos <- (ploidy_ind+1)/ploidy_ind*het_peak_pos
                 original_peal_val <- peaks[original_peak_pos, 1]
                 min_valid_pos     <- het_peak_pos
               }
               datacheck         <- min(300, maxright4fit)
               dci               <- 0
               cat('    Info: min_valid_pos: ', min_valid_pos,'\n')
+              min_valid_pos_save = min_valid_pos
               while(min_valid_pos == original_peak_pos)
               {
                 min_valid_pos     <- min_valid_pos + 1
@@ -561,14 +627,26 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
             xfit_right <- 2*original_peak_pos-xfit_left
             if(first_peak_pos>=200)
             {
-              xfit_left  <- original_peak_pos - 50
-              xfit_right <- original_peak_pos + 50
+              #xfit_left  <- original_peak_pos - 50
+              #xfit_right <- original_peak_pos + 50
+              xfit_left  <- original_peak_pos * left_fit_ratio #- 50 0.85
+              xfit_right <- original_peak_pos * 1.13 #+ 50 1.15
             }
-            v<-optim(par=c(1, 1, 1, 1),
-                     fn=error_minimize_raw, x=x, end=end, xfit=xfit,
-                     xfit_left=xfit_left, xfit_right=xfit_right,
-                     d=error,
-                     min_valid_pos=min_valid_pos, itr=itr)
+            if (ploidy_ind == 1 || scale_flag == TRUE){
+              v<-optim(par=c(1, 1, 1, 1),
+                       fn=error_minimize, x=x, end=end, xfit=xfit,
+                       xfit_left=xfit_left, xfit_right=xfit_right,
+                       d=error,
+                       min_valid_pos=min_valid_pos, itr=itr)
+            }
+            else if (scale_flag == FALSE){
+              v<-optim(par=c(1, 1, 1, 1),
+                       fn=error_minimize3, x=x, end=end,
+                       xfit_left=xfit_left, xfit_right=xfit_right,
+                       d=error,
+                       min_valid_pos=min_valid_pos, itr=itr, meanfit = meanfit, sdfit = sdfit_old)
+            }
+
           }
           else
           {
@@ -579,22 +657,46 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
               xfit_left  <- original_peak_pos - 20
               xfit_right <- original_peak_pos + 20
             }else
-            if(first_peak_pos>=30  && itr<2)
-            {
-              xfit_left  <- original_peak_pos - 10
-              xfit_right <- original_peak_pos + 10
+              if(first_peak_pos>=30  && itr<2)
+              {
+                xfit_left  <- original_peak_pos - 10
+                xfit_right <- original_peak_pos + 10
+              }
+            if(ploidy_ind == 1 || scale_flag == TRUE){
+              v<-optim(par=c(1, 1, 1, 0.8),
+                       fn=error_minimize, x=x, end=end, xfit=xfit,
+                       xfit_left=xfit_left, xfit_right=xfit_right,
+                       d=error,
+                       min_valid_pos=min_valid_pos, itr=itr)
             }
-            v<-optim(par=c(1, 1, 1, 0.8),
-                     fn=error_minimize_raw, x=x, end=end, xfit=xfit,
-                     xfit_left=xfit_left, xfit_right=xfit_right,
-                     d=error,
-                     min_valid_pos=min_valid_pos, itr=itr)
+            else if (scale_flag == FALSE){
+              v<-optim(par=c(1, 1, 1, 0.8),
+                       fn=error_minimize3, x=x, end=end,
+                       xfit_left=xfit_left, xfit_right=xfit_right,
+                       d=error,
+                       min_valid_pos=min_valid_pos, itr=itr, meanfit = meanfit, sdfit = sdfit_old)
+            }
+
           }
           cat('    Info: hom_xfit_left  for hom fitting at itr ', itr,  ': ', xfit_left, '\n')
           cat('    Info: hom_xfit_right for hom fitting at itr ', itr,  ': ', xfit_right, '\n')
+          # if(itr == 1){
+          #   xfit_left
+          # }
           #
           # scale and correct yfit with optimized values in v$par
           xfit2     <- seq(0.01,maxright4fit,0.01)
+
+          # if(ploidy_ind == 1){
+          #   # meanfit   <- mean(x[x>=het_xfit_left & x<=het_xfit_right])*v$par[3]
+          #   meanfit   <- mean(x[x>=xfit_left & x<=xfit_right])*v$par[3]
+          #   meanfit_old <- meanfit
+          #   cat('last meanfit_old: ',meanfit_old,' \n')
+          # }
+          # else{
+          #   meanfit <- meanfit_old * ploidy_ind
+          # }
+
           meanfit   <- mean(x[x>=xfit_left & x<=xfit_right])*v$par[3]
           if(meanfit < 0)
           {
@@ -604,10 +706,10 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
             if(myyfit==0 && itr==1)
             {
               v<-optim(par=c(1, 1, 1),
-                       fn=error_minimize3_raw, x=x, end=end,
+                       fn=error_minimize3, x=x, end=end,
                        xfit_left=xfit_left, xfit_right=xfit_right,
                        d=error,
-                       min_valid_pos=min_valid_pos, itr=itr)
+                       min_valid_pos=min_valid_pos, itr=itr, meanfit = meanfit )
               xfit2    <- seq(0.01,maxright4fit,0.01)
               yfit0    <- dnorm(xfit2,
                                 mean=meanfit,
@@ -623,10 +725,9 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
           } # stop if the data does not follow normal distribution anymore
           sdfit     <- sd(x[  x>=xfit_left & x<=xfit_right])*v$par[1]
           xifit     <- 1*v$par[4]
-          # yfit0     <- dsnorm(xfit2,mean=meanfit,sd=sdfit, xi=xifit)*(100000/itr)*v$par[2]*length(x)
+          #yfit0     <- dsnorm(xfit2,mean=meanfit,sd=sdfit, xi=xifit)*(100000/itr)*v$par[2]*length(x)
           yfit0     <- dnorm(xfit2,mean=meanfit,sd=sdfit)*(100000/itr)*v$par[2]*length(x)
           yfit      <- yfit0[seq(100, length(yfit0), 100)]
-
           ## repeat first fitting if fitting is not satisfactory
           if(itr==1 && end<min(2*original_peak_pos-1, maxright4fit))
           {
@@ -659,7 +760,6 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
             # title(main=paste('Example: fitting at itr ', itr, 'of sample ', sample, 'k=', sizek, ')'),
             #     cex.main=0.8)
             # lines(xfit2[100:length(xfit2)], yfit0[100:length(xfit2)], col="blue", lwd=2)
-
           }
           #### begin
           if(max(yfit) > 1.2*max(error[min_valid_pos:maxright4fit, 2]))
@@ -669,10 +769,10 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
             if(myyfit==0 && itr==1)
             {
               v<-optim(par=c(1, 1, 1),
-                       fn=error_minimize3_raw, x=x, end=end,
+                       fn=error_minimize3, x=x, end=end,
                        xfit_left=xfit_left, xfit_right=xfit_right,
                        d=error,
-                       min_valid_pos=min_valid_pos, itr=itr)
+                       min_valid_pos=min_valid_pos, itr=itr, meanfit = meanfit,sdfit = sdfit_old )
               xfit2    <- seq(0.01,maxright4fit,0.01)
               yfit0    <- dnorm(xfit2,
                                 mean=meanfit,
@@ -703,9 +803,10 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
           error[1:maxright4fit, 2] <- abs(error[1:maxright4fit, 2] - yfit)
           # get more accurate fitted values
           xfit2    <- seq(0.01,maxright4fit,0.01);
-          # yfit0    <- dsnorm(xfit2,mean=meanfit,sd=sdfit, xi=xifit)*(100000/itr)*v$par[2]*length(x)
-          yfit0     <- dnorm(xfit2,mean=meanfit,sd=sdfit)*(100000/itr)*v$par[2]*length(x)
+          #yfit0    <- dsnorm(xfit2,mean=meanfit,sd=sdfit, xi=xifit)*(100000/itr)*v$par[2]*length(x)
 
+
+          yfit0    <- dnorm(xfit2,mean=meanfit,sd=sdfit)*(100000/itr)*v$par[2]*length(x)
           myyfit   <- myyfit + yfit0
           # record fitted parameters
           mymeanfit[itr]  <- meanfit
@@ -754,7 +855,7 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
               h_target <- c(hetfit[1:min(border_pos, het_min_valid_pos)],
                             as.vector(dhet[min(border_pos, het_min_valid_pos)+1:(length(dr[,2])-min(border_pos, het_min_valid_pos)),2]))
               v2 <- optim(par=c(0.11, 1),
-                          fn=error_minimize2_raw,
+                          fn=error_minimize2,
                           h_het=hetfit[1:first_peak_pos],
                           h_hom=fittedyvalues[1:first_peak_pos],
                           h_target=h_target[1:first_peak_pos])
@@ -773,49 +874,20 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
               fittedyvalues[1:selected] <- fittedyvalues[1:selected] + hetfit[1:selected]
             }
             lines(1:length(fittedyvalues), fittedyvalues, col="blue", lwd=5)
-            ## 2023 v1.95 update ##
-
             # het
             if(only_one_hom_peak)
             {
               lines(1:selected, (1-het_fitting_delta)*hetfit[1:selected], col="cyan", lwd=2, lty="dashed")
-              ## 2023 v1.95 update ##
-              options(scipen=999)
-              het_fit <- cbind(1:selected,  round( (1-het_fitting_delta)*hetfit[1:selected] ))
-              write.table(het_fit, file = paste(path, '/',prefix, vers, 'est.', sample, ".genome.size.estimated.k", min(targetsizek), 'to', max(targetsizek),".fitted_hetfit_count.txt", sep=""), sep = " ", quote=F, row.names = F, col.names = F)
-              options(scipen=0)
-              ####
             }
             else
             {
               lines(1:selected,  hetfit[1:selected], col="cyan", lwd=2, lty="dashed")
-              ## 2023 v1.95 update ##
               options(scipen=999)
               het_fit <- cbind(1:selected,  round(hetfit[1:selected]))
               write.table(het_fit, file = paste(path, '/',prefix, vers, 'est.', sample, ".genome.size.estimated.k", min(targetsizek), 'to', max(targetsizek),".fitted_hetfit_count.txt", sep=""), sep = " ", quote=F, row.names = F, col.names = F)
+              cat(paste0('writing hetfit_count file done!!!\n het_fit length: ',dim(het_fit)[1]," lines.\n"))
               options(scipen=0)
-              ####
             }
-            options(scipen=999)
-            ## 2023 0831 update
-            happeak_index <- which.max(het_fit[,2])
-            valley_index  <- which.min(dhet[1:happeak_index, 2])
-            histo_fit                    <- dhet
-            histo_fit[1:valley_index, 2] <- het_fit[1:valley_index, 2]
-            ##
-            # if(itr == 1){
-            #   ## 20230831 update ##
-            #   options(scipen=999)
-            #   first_fit_hom <- cbind(1:length(yfit), yfit)
-            #   write.table(first_fit_hom, file = paste(path, '/',prefix, vers, 'est.', sample, ".genome.size.estimated.k", min(targetsizek), 'to', max(targetsizek),".fitted_first_fit_hom_count.txt", sep=""), sep = " ", quote=F, row.names = F, col.names = F)
-            #   options(scipen=0)
-            #   ####
-            # }
-            ##
-            full_fit <- histo_fit #cbind(1:length(fittedyvalues),  round( fittedyvalues ))
-            write.table(full_fit, file = paste(path, '/',prefix, vers, 'est.', sample, ".genome.size.estimated.k", min(targetsizek), 'to', max(targetsizek),".fitted_fullfit_count.txt", sep=""), sep = " ", quote=F, row.names = F, col.names = F)
-            options(scipen=0)
-            ####
           }
           else
           {
@@ -824,7 +896,6 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
             fitted_peak_value <- which.max(myyfit)/100
             fittedyvalues     <- myyfit[seq(100, length(myyfit), 100)]
           }
-
           # error rate of missing fitting: from raw k-mer counting dhet which includes het k-mers
           sum(fittedyvalues[border_pos:maxright4fit]-dhet[border_pos:maxright4fit,2])/sum(dhet[border_pos:maxright4fit,2])
           # fitted catting original with border_pos <- min_valid_pos; from raw k-mer counting dhet which includes het k-mers
@@ -862,21 +933,21 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
           {
             end_for_mean <- round(fitted_peak_value*2 - fitted_peak_value*2/4) # >7% error; k should be small
           }else
-          if((sizek=="15" || sizek=="17") && myxifit[1]>=0.93 && myxifit[1]<=1.07) # normal case: reduce effect of copy-2 k-mers
-          {
-            end_for_mean <- round(fitted_peak_value*2 - fitted_peak_value*1/4)
-          }else
-            if(myxifit[1]  > 1.07)
+            if((sizek=="15" || sizek=="17") && myxifit[1]>=0.93 && myxifit[1]<=1.07) # normal case: reduce effect of copy-2 k-mers
             {
-              end_for_mean <- round(fitted_peak_value*2 + fitted_peak_value*2/4)
+              end_for_mean <- round(fitted_peak_value*2 - fitted_peak_value*1/4)
             }else
-              if(myxifit[1]  < 0.93)
+              if(myxifit[1]  > 1.07)
               {
-                end_for_mean <- round(fitted_peak_value*2 - fitted_peak_value*4/8)
+                end_for_mean <- round(fitted_peak_value*2 + fitted_peak_value*2/4)
               }else
-              {
-                end_for_mean <- round(fitted_peak_value*2)
-              }
+                if(myxifit[1]  < 0.93)
+                {
+                  end_for_mean <- round(fitted_peak_value*2 - fitted_peak_value*4/8)
+                }else
+                {
+                  end_for_mean <- round(fitted_peak_value*2)
+                }
           #### caution: end_for_mean should be not larger than vector size
           end_for_mean <- min(end_for_mean, length(dr[,1]))       ####
           ####
@@ -885,6 +956,7 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
             end_for_mean     <- round(het_peak_pos*4 - het_peak_pos*4/4)
             end_for_mean     <- min(end_for_mean, length(dr[,1])) ####
             #cat("end_for_mean (only one het peak): ", end_for_mean, '\n')
+            cat("hetfit: ceiling(abs(round(hetfit[1:end_for_mean]))/1000): ",ceiling(abs(round(hetfit[1:end_for_mean]))/1000),"\n")
             xtmp             <- rep(1:end_for_mean,ceiling(abs(round(hetfit[1:end_for_mean]))/1000))
             first_mean_raw   <- 2*mean(xtmp[xtmp>=1 & xtmp<=end_for_mean])
           }else
@@ -921,8 +993,7 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
                 xtmp           <- rep(1:end_for_mean,ceiling(abs(round(yfit2[1:end_for_mean]-hetfit[1:end_for_mean]))/1000))
                 first_mean_raw <- mean(xtmp[xtmp>=1 & xtmp<=end_for_mean]);
               }
-          ##
-
+          #
           genome_size_corrected2 <- round(sum(c(1:length(yfit2))*yfit2[1:length(yfit2)]/first_mean_raw))
           #
           #
@@ -1080,7 +1151,7 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
       cat("\n caution: some samples have NA predicted for fitted   genome size!\n")
       genome_size_summary2[is.na(genome_size_summary2)] <- 0
     }
-    if(length(genome_size_summary[1,])!=0 && length(genome_size_summary2[1,])!=0)
+    if(length(genome_size_summary[1,])!=0 & length(genome_size_summary2[1,])!=0)
     {
       # record in file
       write.table(genome_size_summary,
@@ -1145,47 +1216,14 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
           sep = " ")
   }
   #
-  ## add png draw plot
-
-  data_to_save <- list(
-  genome_size = genome_size,
-  genome_size_filtering_error = genome_size_filtering_error,
-  first_peak_pos = first_peak_pos,
-  genome_size_fitted = genome_size_fitted,
-  fitted_peak_value = fitted_peak_value,
-  first_sd = first_sd,
-  myxifit = myxifit,
-  genome_size_corrected2 = genome_size_corrected2,
-  first_mean_raw = first_mean_raw,
-  repsize = repsize
-  )
-
-  # 判断 het_observed 的值，根据不同情况添加额外的变量
-  if (het_observed) {
-    additional_vars <- list(
-      het_min_valid_pos = het_min_valid_pos,
-      alpha = alpha,
-      alpha_cor = alpha_cor
-    )
-  } else {
-    additional_vars <- list(
-      border_pos = border_pos
-    )
-  }
-
-  # 将额外的变量添加到字典中
-  data_to_save <- c(data_to_save, additional_vars)
-
-  # 保存字典（列表）到文件
-  save(data_to_save, file = "variable_data.Rdata")
-  # legend
-
   end_t <- Sys.time()
   cat('Time consumed: ', format(end_t-start_t), '\n')
+  return(list(het_xfit_right_save,hom_peak_pos_save,het_peak_pos_save,meanfit_old, sdfit_old))
 }
-##
+
+
 ## additional
-filter_peaks_raw <- function(peaks, histo)
+filter_peaks <- function(peaks, histo)
 {
   # find out a major peak with enough support information on both sides (to exlcude potential local maxima)
   pos <- 1 # peak position (namely, the k-mer freq at the peak)
@@ -1250,3 +1288,41 @@ filter_peaks_raw <- function(peaks, histo)
   }
   return(rpeaks)
 }
+
+get_het_pos <- function(histo_data){
+  data <- histo_data
+  y_data <- data$V2
+
+  # Calculate slope (second derivative)
+  slope <- diff(y_data)
+
+  # Find the index where slope becomes positive and its following 5 slopes remain positive or zero
+  start_index <- NULL
+  for (i in 2:(length(slope) - 4)) {
+    if (slope[i] > 0 && all(slope[(i+1):(i+4)] >= 0)) {
+      start_index <- i
+      break
+    }
+  }
+  cat("start index: ",start_index,"\n")
+  end_index <- NULL
+  # Find the first interval where slope starts decreasing after positive slope
+  for (i in (start_index + 1):(length(slope) - 1)) {
+    if (slope[i] < 0 && slope[i+1] < 0) {
+      end_index <- i
+      break
+    }
+    else if (slope[i] >= 0 && slope[i] < slope[i-1] && slope[i] < slope[i+1] &&
+             slope[i-1] < slope[i-2] && slope[i-2] < slope[i-3] &&
+             slope[i+1] < slope[i+2] && slope[i+2] < slope[i+3]){
+      if (is.null(end_index)) {
+        end_index <- i
+        break
+      }
+    }
+  }
+
+  #print(end_index)
+  return(list(start_index ,end_index))
+}
+

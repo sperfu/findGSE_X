@@ -18,6 +18,8 @@ findGSEX(
 )
 }
 \arguments{
+\item{path}{is the histo file location (mandatory).}
+
 \item{sizek}{is the size of k used to generate the histo file (mandatory).
 K is involved in calculating heterzygosity if the genome is heterozygous.}
 
@@ -29,16 +31,30 @@ if one wants to estimate size for a heterozygous genome.
 VALUE for exp_hom must satisfy fp < VALUE < 2*fp, where fp is the freq for homozygous peak.
 If not provided, 0 by default assumes the genome is homozygous.}
 
-\item{histo}{is the histo file (mandatory).}
+\item{ploidy}{is the number of ploidy. (mandatory).}
+
+\item{range_left}{is the left range for estimation, default is exp_hom*0.2, normally do not need
+to change this. (optional).}
+
+\item{range_right}{is the right range for estimation, default is exp_hom*0.2, normally do not need
+to change this. (optional).}
+
+\item{xlimit}{is the x-axis range, if not given, then it will automatically calculate a proper range,
+normally do not need to change this. (optional).}
+
+\item{ylimit}{is the y-axis range, if not given, then it will automatically calculate a proper range,
+normally do not need to change this. (optional).}
+
+\item{histo}{is the histo file name (mandatory).}
 
 \item{outdir}{is the path to write output files (optional).
 If not provided, by default results will be written in the folder
 where the histo file is.}
 }
 \description{
-findGSEX is a function for (up to 10 ploidy)
+findGSEX is a function for multiple polyploidy
 genome size estimation by fitting k-mer frequencies iteratively
-with a normal distribution model. (version still under testing)
+with a normal distribution model.
 
 To use findGSEX, one needs to prepare a histo file,
 which contains two tab-separated columns.
@@ -46,5 +62,5 @@ The first column gives frequencies at which k-mers occur in reads,
 while the second column gives counts of such distinct k-mers.
 Parameters k and related histo file are required for any estimation.
 
-Dependencies (R library) required: pracma, fGarch - see INSTALL.
+Dependencies (R library) required: pracma, fGarch, etc. - see DESCRIPTION for details.
 }
