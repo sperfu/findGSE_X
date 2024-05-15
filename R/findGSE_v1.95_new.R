@@ -1,4 +1,18 @@
-
+#' Minimize the Error for Raw K-mer Frequency Fitting
+#'
+#' This function minimizes the error for raw k-mer frequency fitting by adjusting the mean, standard deviation, and scaling factors.
+#'
+#' @param tooptimize A numeric vector containing the scale factors to optimize.
+#' @param x A numeric vector representing the histogram replicated from \code{d}.
+#' @param xfit x-values to get the skew normal distribution
+#' @param end An integer indicating the right-side position for fitting.
+#' @param xfit_left A numeric value for the left-side position to calculate initial mean and standard deviation.
+#' @param xfit_right A numeric value for the right-side position to calculate initial mean and standard deviation.
+#' @param d A data frame representing the observed k-mer frequencies that will be fitted.
+#' @param min_valid_pos An integer indicating the left-side position from which the observed k-mer frequencies will be fitted.
+#' @param itr An integer representing the iteration count.
+#' @return A numeric value representing the minimized error.
+#' @export
 error_minimize_raw<-function(tooptimize, x, end, xfit, xfit_left, xfit_right, d, min_valid_pos, itr)
 {
   # x            : histogram replicated from d, which is formed from dr
@@ -26,6 +40,16 @@ error_minimize_raw<-function(tooptimize, x, end, xfit, xfit_left, xfit_right, d,
   return(diff0)
 }
 # function for tunning final fitting if heterozgyous genomes
+#' Tuning Final Fitting for Raw Heterozygous Genomes
+#'
+#' This function tunes the final fitting for raw heterozygous genomes by adjusting the delta values for heterozygous and homozygous regions.
+#'
+#' @param tooptimize A numeric vector containing the scale factors to optimize.
+#' @param h_het A numeric vector representing the raw fitting for the heterozygous region.
+#' @param h_hom A numeric vector representing the raw fitting for the homozygous region.
+#' @param h_target A numeric vector representing the target k-mer frequency.
+#' @return A numeric value representing the minimized difference.
+#' @export
 error_minimize2_raw<-function(tooptimize, h_het, h_hom, h_target)
 {
   # h_het   : raw fitting for the heterozygous region
@@ -39,6 +63,20 @@ error_minimize2_raw<-function(tooptimize, h_het, h_hom, h_target)
   return(diff2)
 }
 ## function for minimizing difference from remainder kmer-freq dr: mean, sd, and scaling factor ##
+#' Minimize the Error for Raw Remaining K-mer Frequency
+#'
+#' This function minimizes the error for the raw remaining k-mer frequency by adjusting the scaling factor.
+#'
+#' @param tooptimize A numeric vector containing the scale factors to optimize.
+#' @param x A numeric vector representing the histogram.
+#' @param end An integer indicating the right-side position for fitting.
+#' @param xfit_left A numeric value for the left-side position to calculate initial mean and standard deviation.
+#' @param xfit_right A numeric value for the right-side position to calculate initial mean and standard deviation.
+#' @param d A data frame representing the observed k-mer frequencies that will be fitted.
+#' @param min_valid_pos An integer indicating the left-side position from which the observed k-mer frequencies will be fitted.
+#' @param itr An integer representing the iteration count.
+#' @return A numeric value representing the minimized error.
+#' @export
 error_minimize3_raw<-function(tooptimize, x, end, xfit_left, xfit_right, d, min_valid_pos, itr)
 {
   # x            : histogram
@@ -60,6 +98,13 @@ error_minimize3_raw<-function(tooptimize, x, end, xfit_left, xfit_right, d, min_
   return(diff0)
 }
 # recover count 0: in initial count, making kmer freq consecutive.
+#' Recover Initial Raw K-mer Count
+#'
+#' This function recovers the initial raw k-mer count, making the k-mer frequency consecutive.
+#'
+#' @param d0 A data frame representing the initial raw k-mer count from software like Jellyfish.
+#' @return A data frame with recovered raw k-mer counts.
+#' @export
 initial_count_recover_raw <- function(d0)
 {
   # dr: the initial kmer count from softwares like jellyfish
@@ -73,6 +118,16 @@ initial_count_recover_raw <- function(d0)
   return (dr)
 }
 # modify kmer freq before fitting
+#' Modify Raw K-mer Frequency Before Fitting
+#'
+#' This function modifies the raw k-mer frequency before fitting, adjusting either the left or right part based on the peak position.
+#'
+#' @param start An integer indicating the starting position (does not include the peak position).
+#' @param end An integer indicating the ending position (does not include the peak position).
+#' @param left_right An integer indicating whether to modify the left part (0) or the right part (1).
+#' @param histx A data frame representing the raw k-mer histogram.
+#' @return A modified data frame with adjusted raw k-mer frequencies.
+#' @export
 kmer_count_modify_raw <- function(start, end, left_right, histx)
 {
   # start or end does not include the peak position
@@ -93,7 +148,17 @@ kmer_count_modify_raw <- function(start, end, left_right, histx)
   return (histx)
 }
 #
-
+#' Estimate Genome Size Using Raw K-mer Frequencies
+#'
+#' This function estimates the genome size of a species using raw k-mer frequencies.
+#'
+#' @param histo A character string specifying the path to the histogram file.
+#' @param sizek An integer indicating the size of k used to generate the histogram.
+#' @param outdir A character string specifying the output directory.
+#' @param exp_hom A numeric value representing the expected average k-mer coverage for the homozygous regions.
+#' @param species A character string specifying the species name.
+#' @return A list containing the estimated genome size and other fitting parameters.
+#' @export
 findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
 {
   # initial values
@@ -110,9 +175,9 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
   if(missing(outdir))   outdir  <- getwd()
   ######################################## libararies required ###############################################
   # find all peaks in a time series
-  suppressWarnings(suppressMessages(library("pracma")))
+  #suppressWarnings(suppressMessages(library("pracma")))
   # provide skew normal distrbution fitting (dsnorm(...))
-  suppressWarnings(suppressMessages(library("fGarch")))
+  #suppressWarnings(suppressMessages(library("fGarch")))
   ## version id: output het fitting values
   vers <- 'v1.95.'
   ##
@@ -1185,6 +1250,14 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
 }
 ##
 ## additional
+#' Filter Peaks from Raw K-mer Histogram
+#'
+#' This function filters peaks from a raw k-mer histogram to find a major peak with enough support information on both sides.
+#'
+#' @param peaks A data frame containing the peaks from the histogram.
+#' @param histo A data frame representing the raw k-mer histogram.
+#' @return A data frame with filtered peaks.
+#' @export
 filter_peaks_raw <- function(peaks, histo)
 {
   # find out a major peak with enough support information on both sides (to exlcude potential local maxima)

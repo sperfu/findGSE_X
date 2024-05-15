@@ -1,3 +1,28 @@
+#' Initialize Start Time
+#'
+#' This function initializes the start time for a process.
+#'
+#' @return The start time of the process.
+#' @export
+initialize_start_time <- function() {
+  start_time <- proc.time()
+  return(start_time)
+}
+#' Minimize the Error for K-mer Frequency Fitting
+#'
+#' This function minimizes the error for k-mer frequency fitting by adjusting the mean, standard deviation, and scaling factors.
+#'
+#' @param tooptimize A numeric vector containing the scale factors to optimize.
+#' @param x A numeric vector representing the histogram replicated from \code{d}.
+#' @param xfit x-values to get the skew normal distribution
+#' @param end An integer indicating the right-side position for fitting.
+#' @param xfit_left A numeric value for the left-side position to calculate initial mean and standard deviation.
+#' @param xfit_right A numeric value for the right-side position to calculate initial mean and standard deviation.
+#' @param d A data frame representing the observed k-mer frequencies that will be fitted.
+#' @param min_valid_pos An integer indicating the left-side position from which the observed k-mer frequencies will be fitted.
+#' @param itr An integer representing the iteration count.
+#' @return A numeric value representing the minimized error.
+#' @export
 error_minimize<-function(tooptimize, x, end, xfit, xfit_left, xfit_right, d, min_valid_pos, itr)
 {
   # x            : histogram replicated from d, which is formed from dr
@@ -31,6 +56,16 @@ error_minimize<-function(tooptimize, x, end, xfit, xfit_left, xfit_right, d, min
   return(diff0)
 }
 # function for tunning final fitting if heterozgyous genomes
+#' Tuning Final Fitting for Heterozygous Genomes
+#'
+#' This function tunes the final fitting for heterozygous genomes by adjusting the delta values for heterozygous and homozygous regions.
+#'
+#' @param tooptimize A numeric vector containing the scale factors to optimize.
+#' @param h_het A numeric vector representing the raw fitting for the heterozygous region.
+#' @param h_hom A numeric vector representing the raw fitting for the homozygous region.
+#' @param h_target A numeric vector representing the target k-mer frequency.
+#' @return A numeric value representing the minimized difference.
+#' @export
 error_minimize2<-function(tooptimize, h_het, h_hom, h_target)
 {
   # h_het   : raw fitting for the heterozygous region
@@ -44,6 +79,22 @@ error_minimize2<-function(tooptimize, h_het, h_hom, h_target)
   return(diff2)
 }
 ## function for minimizing difference from remainder kmer-freq dr: mean, sd, and scaling factor ##
+#' Minimize the Error for Remaining K-mer Frequency
+#'
+#' This function minimizes the error for the remaining k-mer frequency by adjusting the scaling factor.
+#'
+#' @param tooptimize A numeric vector containing the scale factors to optimize.
+#' @param x A numeric vector representing the histogram.
+#' @param end An integer indicating the right-side position for fitting.
+#' @param xfit_left A numeric value for the left-side position to calculate initial mean and standard deviation.
+#' @param xfit_right A numeric value for the right-side position to calculate initial mean and standard deviation.
+#' @param d A data frame representing the observed k-mer frequencies that will be fitted.
+#' @param min_valid_pos An integer indicating the left-side position from which the observed k-mer frequencies will be fitted.
+#' @param itr An integer representing the iteration count.
+#' @param meanfit A numeric value representing the initial mean.
+#' @param sdfit A numeric value representing the initial standard deviation.
+#' @return A numeric value representing the minimized error.
+#' @export
 error_minimize3<-function(tooptimize, x, end, xfit_left, xfit_right, d, min_valid_pos, itr, meanfit, sdfit)
 {
   # x            : histogram
@@ -71,6 +122,13 @@ error_minimize3<-function(tooptimize, x, end, xfit_left, xfit_right, d, min_vali
   return(diff0)
 }
 # recover count 0: in initial count, making kmer freq consecutive.
+#' Recover Initial K-mer Count
+#'
+#' This function recovers the initial k-mer count, making the k-mer frequency consecutive.
+#'
+#' @param d0 A data frame representing the initial k-mer count from software like Jellyfish.
+#' @return A data frame with recovered k-mer counts.
+#' @export
 initial_count_recover <- function(d0)
 {
   # dr: the initial kmer count from softwares like jellyfish
@@ -84,6 +142,16 @@ initial_count_recover <- function(d0)
   return (dr)
 }
 # modify kmer freq before fitting
+#' Modify K-mer Frequency Before Fitting
+#'
+#' This function modifies the k-mer frequency before fitting, adjusting either the left or right part based on the peak position.
+#'
+#' @param start An integer indicating the starting position (does not include the peak position).
+#' @param end An integer indicating the ending position (does not include the peak position).
+#' @param left_right An integer indicating whether to modify the left part (0) or the right part (1).
+#' @param histx A data frame representing the k-mer histogram.
+#' @return A modified data frame with adjusted k-mer frequencies.
+#' @export
 kmer_count_modify <- function(start, end, left_right, histx)
 {
   # start or end does not include the peak position
@@ -103,7 +171,23 @@ kmer_count_modify <- function(start, end, left_right, histx)
   }
   return (histx)
 }
-
+#' Estimate Genome Size Using K-mer Frequencies
+#'
+#' This function estimates the genome size of a species using k-mer frequencies.
+#'
+#' @param histo A character string specifying the path to the histogram file.
+#' @param sizek An integer indicating the size of k used to generate the histogram.
+#' @param outdir A character string specifying the output directory.
+#' @param exp_hom A numeric value representing the expected average k-mer coverage for the homozygous regions.
+#' @param species A character string specifying the species name.
+#' @param ploidy_ind An integer indicating the ploidy index (default is 2).
+#' @param avg_cov A numeric value representing the average coverage.
+#' @param left_fit_ratio A numeric value for the left fit ratio (default is 0.835).
+#' @param meanfit_old A numeric value representing the previous mean fit.
+#' @param sdfit_old A numeric value representing the previous standard deviation fit.
+#' @param scale_flag A logical value indicating whether to apply scaling (default is FALSE).
+#' @return A list containing the estimated genome size and other fitting parameters.
+#' @export
 findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploidy_ind=2,avg_cov = 0,left_fit_ratio = 0.835, meanfit_old = 0, sdfit_old = 0, scale_flag = FALSE)
 {
   # initial values
@@ -122,9 +206,9 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
   ######################################## libararies required ###############################################
   #cat("\n special version: \n")
   # find all peaks in a time series
-  suppressWarnings(suppressMessages(library("pracma")))
+  #suppressWarnings(suppressMessages(library("pracma")))
   # provide skew normal distrbution fitting (dsnorm(...))
-  suppressWarnings(suppressMessages(library("fGarch")))
+  #suppressWarnings(suppressMessages(library("fGarch")))
   ## version id
   vers <- 'v1.94.'
   ##
@@ -709,7 +793,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
                        fn=error_minimize3, x=x, end=end,
                        xfit_left=xfit_left, xfit_right=xfit_right,
                        d=error,
-                       min_valid_pos=min_valid_pos, itr=itr, meanfit = meanfit )
+                       min_valid_pos=min_valid_pos, itr=itr, meanfit = meanfit, sdfit = sdfit_old )
               xfit2    <- seq(0.01,maxright4fit,0.01)
               yfit0    <- dnorm(xfit2,
                                 mean=meanfit,
@@ -766,6 +850,9 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
           {
             cat(paste("    Note on hom fitting: fitting stopped at iter ",
                       itr, ", expected: ", totalitr, "\n",sep=""))
+            if(length(myyfit) == 1){
+
+
             if(myyfit==0 && itr==1)
             {
               v<-optim(par=c(1, 1, 1),
@@ -795,6 +882,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
                   homfit  <- yfit0
                 }
               }
+            }
             }
             break;
           }
@@ -1223,6 +1311,14 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
 
 
 ## additional
+#' Filter Peaks from K-mer Histogram
+#'
+#' This function filters peaks from a k-mer histogram to find a major peak with enough support information on both sides.
+#'
+#' @param peaks A data frame containing the peaks from the histogram.
+#' @param histo A data frame representing the k-mer histogram.
+#' @return A data frame with filtered peaks.
+#' @export
 filter_peaks <- function(peaks, histo)
 {
   # find out a major peak with enough support information on both sides (to exlcude potential local maxima)
@@ -1289,6 +1385,13 @@ filter_peaks <- function(peaks, histo)
   return(rpeaks)
 }
 
+#' Filter Peaks from K-mer Histogram
+#'
+#' This function filters peaks from a k-mer histogram to find a major peak with enough support information on both sides.
+#'
+#' @param histo_data A data frame representing the k-mer histogram.
+#' @return A data frame with filtered peaks.
+#' @export
 get_het_pos <- function(histo_data){
   data <- histo_data
   y_data <- data$V2

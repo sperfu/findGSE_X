@@ -59,13 +59,13 @@
 
 source('R/findGSE_v1.95_new.R')
 source('R/utils.R')
-library(scales)
-library(png)
-library(dplyr)
-library(RColorBrewer)
-library(ggplot2)
+# library(scales)
+# library(png)
+# library(dplyr)
+# library(RColorBrewer)
+# library(ggplot2)
+options(warn = -1)
 
-start_time <- proc.time()
 
 ################################################## main #############################################################
 #' @title Estimate genome size of polyploid species using k-mer frequencies.
@@ -82,9 +82,9 @@ start_time <- proc.time()
 #'
 #' @description Dependencies (R library) required: pracma, fGarch, etc. - see DESCRIPTION for details.
 #'
-#'
+#' @import dnorm,pdf,brewer.pal
 #' @param path is the histo file location (mandatory).
-#' @param histo is the histo file name (mandatory).
+#' @param samples is the histo file name (mandatory)
 #' @param sizek is the size of k used to generate the histo file (mandatory).
 #' K is involved in calculating heterzygosity if the genome is heterozygous.
 #' @param exp_hom a rough average k-mer coverage for finding the homozygous regions.
@@ -103,13 +103,13 @@ start_time <- proc.time()
 #' normally do not need to change this. (optional).
 #' @param ylimit is the y-axis range, if not given, then it will automatically calculate a proper range,
 #' normally do not need to change this. (optional).
-#' @param outdir is the path to write output files (optional).
+#' @param output_dir is the path to write output files (optional).
 #' If not provided, by default results will be written in the folder
 #' where the histo file is.
 #' @export
 #'
 findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_right, xlimit, ylimit ,output_dir="outfile"){
-
+  start_time <- initialize_start_time()
   if (!grepl("/$", path)) {
     path <- paste0(path, "/")
   }
@@ -180,6 +180,7 @@ findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
 
       #load data
+      data_to_save <- NULL
       load("variable_data.Rdata")
 
       #
@@ -319,7 +320,7 @@ findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
       dev.off()
 
-      end_time <- proc.time()
+      end_time <- initialize_start_time()
       execution_time <- end_time - start_time
       print(paste("Program running time:", sum(execution_time)))
       ## draw png file
@@ -777,7 +778,7 @@ findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
 
 
-        end_time <- proc.time()
+        end_time <- initialize_start_time()
         execution_time <- end_time - start_time
         print(paste("Program running time:", sum(execution_time)))
         # png file
@@ -1320,7 +1321,7 @@ findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
         ## end main code
 
-        end_time <- proc.time()
+        end_time <- initialize_start_time()
         execution_time <- end_time - start_time
         print(paste("Program running time:", sum(execution_time)))
         ## png file draw
@@ -1600,7 +1601,7 @@ findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
     } else if (ploidy >= 10) {
       haploid_size_data <- data.frame(decaploid_size = paste0(as.integer(genome_size * ploidy), " Mb"), haploid_size = paste0(as.integer(genome_size), " Mb"))
     }
-    write.csv(haploid_size_data, file = paste(path, output_dir ,sample,"_haploid_size.csv", sep=""), sep = ",",row.names=FALSE, quote=FALSE)
+    write.csv(haploid_size_data, file = paste(path, output_dir ,sample,"_haploid_size.csv", sep=""),row.names=FALSE, quote=FALSE)
 
   }
 }

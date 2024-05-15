@@ -20,6 +20,8 @@ findGSEX(
 \arguments{
 \item{path}{is the histo file location (mandatory).}
 
+\item{samples}{is the histo file name (mandatory)}
+
 \item{sizek}{is the size of k used to generate the histo file (mandatory).
 K is involved in calculating heterzygosity if the genome is heterozygous.}
 
@@ -45,9 +47,7 @@ normally do not need to change this. (optional).}
 \item{ylimit}{is the y-axis range, if not given, then it will automatically calculate a proper range,
 normally do not need to change this. (optional).}
 
-\item{histo}{is the histo file name (mandatory).}
-
-\item{outdir}{is the path to write output files (optional).
+\item{output_dir}{is the path to write output files (optional).
 If not provided, by default results will be written in the folder
 where the histo file is.}
 }
