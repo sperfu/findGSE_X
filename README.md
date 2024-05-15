@@ -3,8 +3,10 @@
 </div>
 
 # findGSEX
+
 <!-- badges: start -->
-  [![R-CMD-check](https://github.com/sperfu/findGSEX/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sperfu/findGSEX/actions/workflows/R-CMD-check.yaml)
+  
+[![R-CMD-check](https://github.com/sperfu/findGSEX/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sperfu/findGSEX/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
   
 Accurate estimating genome size is a crucial task in sequencing projects. Current methods often struggle with polyploidy or become inefficient when dealing with species that exceed a ploidy level of six. To address these challenges, we introduce findGSEX, an enhanced version of findGSE. findGSEX utilizes a segmented fitting approach to fit a normal distribution to polyploid species within a segmented framework. This ap-proach simplifies the process of single fitting while significantly expanding the range of ploidy levels it can handle. Moreover, findGSEX offers users interactive tools through both an open-source R application and a web application, facilitating reliable and precise estimation of genome size.  
