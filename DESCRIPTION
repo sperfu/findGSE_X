@@ -11,3 +11,5 @@ LazyData: true
 Imports:
 Depends: R(>= 4.2.0),RColorBrewer,ggplot2,pracma,fGarch,scales,png,dplyr
 RoxygenNote: 7.3.1
+URL: https://github.com/sperfu/findGSEX
+BugReports: https://github.com/sperfu/findGSEX/issues
