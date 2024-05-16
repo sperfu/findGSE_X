@@ -17,26 +17,51 @@ We have released our backend-server findGSEX and provide a CPU-based version of 
 
 ## Installation & Usage
 
-## Instructions for running Jellyfish:
+### Instructions for running Jellyfish:
 
-1. Download and install jellyfish from: [http://www.genome.umd.edu/jellyfish.html#Release](http://www.genome.umd.edu/jellyfish.html#Release)
-2. Count kmers using jellyfish:
+1. **Download and install jellyfish** from: [Jellyfish Release](http://www.genome.umd.edu/jellyfish.html#Release)
 
-```bash
-jellyfish count -C -m 21 -t 1 -s 5G *.fastq -o reads.mer
-```
+2. **Count kmers using jellyfish**:
 
-*Note: Adjust the memory (-s) and threads (-t) parameters according to your server. This example uses 1 threads and 5GB of RAM. The kmer length (-m) may need to be scaled if you have low coverage or a high error rate. Always use 'canonical kmers' (-C).*
+    ```sh
+    jellyfish count -C -m 21 -t 1 -s 5G *.fastq -o reads.mer
+    ```
+    
+    *Note: Adjust the memory (-s) and threads (-t) parameters according to your server. This example uses 1 thread and 5GB of RAM. The kmer length (-m) may need to be scaled if you have low coverage or a high error rate. Always use 'canonical kmers' (-C).*
 
-3. Export the kmer count histogram:
+3. **Export the kmer count histogram**:
 
-```bash
-jellyfish histo -h 30000000 -t 10 -o reads.histo reads.mer
-```
+    ```sh
+    jellyfish histo -h 3000000 -t 10 -o reads.histo reads.mer
+    ```
+    
+    *Note: The thread count (-t) should be scaled according to your server.*
 
-*Note: The thread count (-t) should be scaled according to your server.*
+4. **Upload `reads.histo` to findGSEX**.
 
-4. Upload `reads.histo` to findGSEX.
+
+### Using KMC:
+
+1. **Download and install KMC** from: [KMC GitHub](https://github.com/refresh-bio/KMC)
+
+2. **Count kmers using KMC**:
+
+    ```sh
+    kmc -k21 -t1 -m5 -ci1 *.fastq reads_kmc tmp
+    ```
+    
+    *Note: Adjust the memory (-m) and threads (-t) parameters according to your server. This example uses 1 thread and 5GB of RAM. The kmer length (-k) may need to be scaled if you have low coverage or a high error rate. The `-ci1` option ensures that kmers with a count of at least 1 are included.*
+
+3. **Export the kmer count histogram**:
+
+    ```sh
+    kmc_tools transform reads_kmc histogram reads_kmc.histo
+    ```
+    
+    *Note: This will create the histogram file `reads_kmc.histo`.*
+
+4. **Upload `reads_kmc.histo` to findGSEX**.
+
 
 ## Instructions for installing findGSEX package
 

@@ -175,9 +175,9 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
   if(missing(outdir))   outdir  <- getwd()
   ######################################## libararies required ###############################################
   # find all peaks in a time series
-  #suppressWarnings(suppressMessages(library("pracma")))
+  # suppressWarnings(suppressMessages(library("pracma")))
   # provide skew normal distrbution fitting (dsnorm(...))
-  #suppressWarnings(suppressMessages(library("fGarch")))
+  # suppressWarnings(suppressMessages(library("fGarch")))
   ## version id: output het fitting values
   vers <- 'v1.95.'
   ##
@@ -308,7 +308,7 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
           error    <- dr
           cat(paste("    Size ", sizek , " fitting for het k-mers \n", sep=""));
           # find hom and het peaks (if any).
-          peaks    <- findpeaks(error[2:exp_hom_cov_max, 2])
+          peaks    <- pracma::findpeaks(error[2:exp_hom_cov_max, 2])
           if(length(peaks) == 0)
           {
             plot(dhet[, 1], dhet[, 2],
@@ -490,23 +490,23 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
               if(het_observed)
               {
                 # for  border_pos
-                peaks           <- findpeaks(error[3:selected, 2])
+                peaks           <- pracma::findpeaks(error[3:selected, 2])
                 peaks[,2:4]     <- peaks[,2:4]+2
                 border_pos      <- peaks[1, 3]          # caution: peaks[peakindex, 3]
                 # for others: caution!
                 if(main_peak_is_hom==F)
                 {
-                  peaks           <- findpeaks(error[round(0.5*(het_peak_pos+hom_peak_pos)):selected, 2])
+                  peaks           <- pracma::findpeaks(error[round(0.5*(het_peak_pos+hom_peak_pos)):selected, 2])
                   peaks[,1:4]     <- peaks[,1:4]+round(0.5*(het_peak_pos+hom_peak_pos))-1
                 }else
                 {
-                  peaks           <- findpeaks(error[het_peak_pos:selected, 2])
+                  peaks           <- pracma::findpeaks(error[het_peak_pos:selected, 2])
                   peaks[,1:4]     <- peaks[,1:4]+het_peak_pos-1
                 }
               }
               else
               {
-                peaks           <- findpeaks(error[3:selected, 2])
+                peaks           <- pracma::findpeaks(error[3:selected, 2])
                 peaks[,2:4]     <- peaks[,2:4]+2
                 ## new on 2017-09-16
                 peaks           <- filter_peaks_raw(peaks, error)
@@ -1120,7 +1120,7 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
     ylimmax <- 0
     for (sizek in targetsizek[1]) {
       histx<-read.table(countingfile)
-      peaks2             <- findpeaks(histx$V2[3:selected])
+      peaks2             <- pracma::findpeaks(histx$V2[3:selected])
       peaks2[,2:4]       <- peaks2[,2:4]+2
       if(1.5*max(peaks2[,1]) > ylimmax)
       {

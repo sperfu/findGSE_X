@@ -1,18 +1,22 @@
 Package: findGSEX
 Type: Package
-Title: Estimate genome size of polyploid species using k-mer frequencies
+Title: Estimate Genome Size of Polyploid Species Using k-Mer Frequencies
 Version: 1.2.0
 Author: Laiyi Fu & Hequan Sun
 Maintainer: Laiyi Fu <fulaiyi321@163.com>
-Description: Standalone version of findGSEX.
+Description: findGSEX is a package to estimate the genome size of polyploid species using k-mer frequencies. The package provides functions to process k-mer frequency data and estimate genome size.
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-Depends: R(>= 4.2.0),RColorBrewer,ggplot2,pracma,fGarch,scales,png,dplyr
+Depends: R(>= 4.2.0),RColorBrewer,ggplot2
+Imports:
+    pracma,
+    scales,
+    dplyr
 RoxygenNote: 7.3.1
 URL: https://github.com/sperfu/findGSEX
 BugReports: https://github.com/sperfu/findGSEX/issues
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
 VignetteBuilder: knitr

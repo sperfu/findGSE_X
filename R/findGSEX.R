@@ -59,11 +59,10 @@
 
 source('R/findGSE_v1.95_new.R')
 source('R/utils.R')
-# library(scales)
-# library(png)
-# library(dplyr)
+library(scales)
+library(dplyr)
 # library(RColorBrewer)
-# library(ggplot2)
+library(ggplot2)
 options(warn = -1)
 
 
@@ -148,7 +147,7 @@ findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
     if(ploidy <= 2){
       cat('Ploidy less than 2 ,starting...\n')
-      brewer_palette <- brewer.pal(ploidy, "Set1")
+      brewer_palette <- RColorBrewer::brewer.pal(ploidy, "Set1")
       findGSE_raw(histo=paste0(path ,sample),sizek=sizek, outdir=paste0(path, output_dir), exp_hom=exp_hom)
 
       cat('Start findGSE plot drawing, please wait...\n')
@@ -323,8 +322,8 @@ findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
       end_time <- initialize_start_time()
       execution_time <- end_time - start_time
       print(paste("Program running time:", sum(execution_time)))
-      ## draw png file
-      png(paste(path, output_dir ,sample,"_hap_genome_size_est.png", sep=""),  width = 1200, height = 800, res = 200)
+      ## draw grDevices::png file
+      grDevices::png(paste(path, output_dir ,sample,"_hap_genome_size_est.png", sep=""),  width = 1200, height = 800, res = 200)
       par(family = "Helvetica")
 
       plot(histo_raw$V1,
@@ -428,7 +427,7 @@ findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
       left_fit_ratio_list <- c(0.835)
       ## define selected color
       # select color
-      brewer_palette <- brewer.pal(ploidy, "Set1")
+      brewer_palette <- RColorBrewer::brewer.pal(ploidy, "Set1")
       if(het_pos < 80){
         cat("het_pos is ",het_pos," enter het_pos < 80 process... \n")
         portion_size <- c()
@@ -476,7 +475,7 @@ findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                 cat('meanfit_old in ploidy 1 is:', meanfit_old,' \n')
                 histo_het <- read.table(paste(path, output_dir, "v1.94.est.",sample,".genome.size.estimated.k",sizek, "to", sizek, ".fitted_hetfit_count.txt", sep="") ) # from prepare_findGSE.R
 
-              }                  #png(paste("apple_hap_genome_size_est.jpg", sep=""),  height=400, width=708)
+              }                  #grDevices::png(paste("apple_hap_genome_size_est.jpg", sep=""),  height=400, width=708)
               ####
               #print(histo_raw[1:100, ])#
               #print(histo_het[1:100, ])
@@ -781,10 +780,10 @@ findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
         end_time <- initialize_start_time()
         execution_time <- end_time - start_time
         print(paste("Program running time:", sum(execution_time)))
-        # png file
+        # grDevices::png file
 
-        png(paste(path, output_dir ,sample,"_hap_genome_size_est.png", sep=""),  width = 1200, height = 800, res = 200)
-        #png(paste(path, output_dir ,sample,"_hap_genome_size_est.png", sep=""),  height=4, width=7.08661)
+        grDevices::png(paste(path, output_dir ,sample,"_hap_genome_size_est.png", sep=""),  width = 1200, height = 800, res = 200)
+        #grDevices::png(paste(path, output_dir ,sample,"_hap_genome_size_est.grDevices::png", sep=""),  height=4, width=7.08661)
         par(family = "Helvetica")
         if(!success_file){
           ploidy_raw = ploidy
@@ -945,7 +944,7 @@ findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
             histo_raw <- read.table(paste(path, sample, sep="") ) # from jellyfish
             for(left_fit_ratio in left_fit_ratio_list){
               fit_para_save_list = findGSE_sp(histo = paste(path, sample, sep = ""), sizek = sizek , outdir = paste(path, output_dir, sep = ""), exp_hom = exp_hom_temp,ploidy_ind=ploidy_ind, avg_cov=avg_cov,left_fit_ratio=left_fit_ratio, meanfit_old=meanfit_old, sdfit_old = sdfit_old, scale_flag = scale_flag)
-              #png(paste("apple_hap_genome_size_est.jpg", sep=""),  height=400, width=708)
+              #grDevices::png(paste("apple_hap_genome_size_est.jpg", sep=""),  height=400, width=708)
               ####
               het_xfit_right_save <- fit_para_save_list[[1]]
               hom_peak_pos_save <- fit_para_save_list[[2]]
@@ -1324,10 +1323,10 @@ findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
         end_time <- initialize_start_time()
         execution_time <- end_time - start_time
         print(paste("Program running time:", sum(execution_time)))
-        ## png file draw
+        ## grDevices::png file draw
 
 
-        png(paste(path, output_dir ,sub("_scaled$", "", sample),"_hap_genome_size_est.png", sep=""),  width = 1200, height = 800, res = 200)
+        grDevices::png(paste(path, output_dir ,sub("_scaled$", "", sample),"_hap_genome_size_est.png", sep=""),  width = 1200, height = 800, res = 200)
         par(family = "Helvetica")
         if(!success_file){
           ploidy_raw = ploidy
@@ -1338,7 +1337,7 @@ findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
             avg_cov = 0
             cat('ploidy index : ',ploidy_ind)
-            #png(paste("apple_hap_genome_size_est.jpg", sep=""),  height=400, width=708)
+            #grDevices::png(paste("apple_hap_genome_size_est.jpg", sep=""),  height=400, width=708)
             ####
             histo_raw <- read.table(paste(path, sub("_scaled$", "", sample), sep="") ) # from jellyfish
             histo_het <- read.table(paste(path, output_dir, "v1.94.est.",sample,".genome.size.estimated.k",sizek, "to", sizek, ".fitted_hetfit_count.txt", sep="") ) # from prepare_findGSE.R
@@ -1490,9 +1489,9 @@ findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
 
 
-    #    # png file
+    #    # grDevices::png file
 
-    #   png(paste(path, output_dir ,sample,"_hap_genome_size_est.png", sep=""),  width = 800, height = 600)
+    #   grDevices::png(paste(path, output_dir ,sample,"_hap_genome_size_est.grDevices::png", sep=""),  width = 800, height = 600)
 
     #   for (ploidy_ind in seq(ploidy)){
     #     if(ploidy_ind == 1){
