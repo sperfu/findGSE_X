@@ -1,18 +1,19 @@
 <div align="center">
-    <img src="http://146.56.237.198:3838/findGSEX/findGSEX_logo1205-2.png" width="50%" height=auto>
+    <img src="http://146.56.237.198:3838/findGSEP/findGSEP_logo1205-2.png" width="50%" height=auto>
 </div>
 
-# findGSEX
+# findGSEP
 
 <!-- badges: start -->
-  [![R-CMD-check](https://github.com/sperfu/findGSEX/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sperfu/findGSEX/actions/workflows/R-CMD-check.yaml)
-  <!-- badges: end -->
   
-Accurate estimating genome size is a crucial task in sequencing projects. Current methods often struggle with polyploidy or become inefficient when dealing with species that exceed a ploidy level of six. To address these challenges, we introduce findGSEX, an enhanced version of findGSE. findGSEX utilizes a segmented fitting approach to fit a normal distribution to polyploid species within a segmented framework. This ap-proach simplifies the process of single fitting while significantly expanding the range of ploidy levels it can handle. Moreover, findGSEX offers users interactive tools through both an open-source R application and a web application, facilitating reliable and precise estimation of genome size.  
+[![R-CMD-check](https://github.com/sperfu/findGSEP/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sperfu/findGSEP/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+  
+Accurate estimating genome size is a crucial task in sequencing projects. Current methods often struggle with polyploidy or become inefficient when dealing with species that exceed a ploidy level of six. To address these challenges, we introduce findGSEP, an enhanced version of findGSE. findGSEP utilizes a segmented fitting approach to fit a normal distribution to polyploid species within a segmented framework. This ap-proach simplifies the process of single fitting while significantly expanding the range of ploidy levels it can handle. Moreover, findGSEP offers users interactive tools through both an open-source R application and a web application, facilitating reliable and precise estimation of genome size.  
 
 # News 🌟
 
-We have released our backend-server findGSEX and provide a CPU-based version of [findGSEX](http://146.56.237.198:3838/findGSEX/) online platform. Please check it out!!!
+We have released our backend-server findGSEP and provide a CPU-based version of [findGSEP](http://146.56.237.198:3838/findGSEP/) online platform. Please check it out!!!
 
 
 ## Installation & Usage
@@ -37,7 +38,7 @@ We have released our backend-server findGSEX and provide a CPU-based version of 
     
     *Note: The thread count (-t) should be scaled according to your server.*
 
-4. **Upload `reads.histo` to findGSEX**.
+4. **Upload `reads.histo` to findGSEP**.
 
 
 ### Using KMC:
@@ -60,10 +61,10 @@ We have released our backend-server findGSEX and provide a CPU-based version of 
     
     *Note: This will create the histogram file `reads_kmc.histo`.*
 
-4. **Upload `reads_kmc.histo` to findGSEX**.
+4. **Upload `reads_kmc.histo` to findGSEP**.
 
 
-## Instructions for installing findGSEX package
+## Instructions for installing findGSEP package
 
 1. Install `devtools`:
 
@@ -75,11 +76,11 @@ install.packages("devtools")
 
 
 ```bash
-devtools::install_github("sperfu/findGSEX")
+devtools::install_github("sperfu/findGSEP")
 ```
 ### Data
 
-You can check our demo dataset at our [webserver](http://146.56.237.198:3838/findGSEX/) or [drive](https://drive.google.com/drive/folders/1fBuPRxi_J-oMpj6G2KokEUeB_8S8ahH6?usp=share_link) for complete data. We have provide precalculated histo file whose ploidy number ranging from tetraploid to octoploid.
+You can check our demo dataset at our [webserver](http://146.56.237.198:3838/findGSEP/) or [drive](https://drive.google.com/drive/folders/1fBuPRxi_J-oMpj6G2KokEUeB_8S8ahH6?usp=share_link) for complete data. We have provide precalculated histo file whose ploidy number ranging from tetraploid to octoploid.
 
 ### Usage:
 ```R
@@ -100,9 +101,9 @@ ylimit <- -1
 range_left <- exp_hom * 0.2
 range_right <- exp_hom * 0.2
 
-#Call the findGSEX function with specified parameters:
+#Call the findGSEP function with specified parameters:
 
-findGSEX(path, samples, sizek, exp_hom, ploidy, range_left, range_right, xlimit, ylimit, output_dir)
+findGSEP(path, samples, sizek, exp_hom, ploidy, range_left, range_right, xlimit, ylimit, output_dir)
 
 # For any questions, usage inquiries, or reporting potential bugs, please contact the author.
 ```
@@ -111,7 +112,7 @@ After running, You will find 'your_file.histo_hap_genome_size_est.pdf' in your o
 
 ## Parameter settings
 
-You can reference to our paramenter setting for those species we used in our [webserver](http://146.56.237.198:3838/findGSEX/) or [demo dataset](https://drive.google.com/drive/folders/1fBuPRxi_J-oMpj6G2KokEUeB_8S8ahH6?usp=share_link).
+You can reference to our paramenter setting for those species we used in our [webserver](http://146.56.237.198:3838/findGSEP/) or [demo dataset](https://drive.google.com/drive/folders/1fBuPRxi_J-oMpj6G2KokEUeB_8S8ahH6?usp=share_link).
 
 | Species           | Expected Hom(Mb) | Ploidy number | Size k |
 |-------------------|------------------|---------------|--------|

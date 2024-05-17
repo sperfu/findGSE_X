@@ -1,5 +1,5 @@
 exportPattern("^[[:alpha:]]+")
-export(findGSEX)
+export(findGSEP)
 importFrom("grDevices", "dev.off", "grey", "pdf", "png", "rainbow")
   importFrom("graphics", "abline", "axis", "barplot", "legend", "lines",
              "par", "polygon", "text", "title")

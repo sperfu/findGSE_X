@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(findGSEX)
+library(findGSEP)
 ```
 ---
 title: "Estimate Genome Size of Polyploid Species Using K-mer Frequencies"
@@ -25,16 +25,16 @@ output: html_document
 
 ## Description
 
-`findGSEX` is a function for multiple polyploidy genome size estimation by fitting k-mer frequencies iteratively with a normal distribution model.
+`findGSEP` is a function for multiple polyploidy genome size estimation by fitting k-mer frequencies iteratively with a normal distribution model.
 
-To use `findGSEX`, one needs to prepare a histo file, which contains two tab-separated columns. The first column gives frequencies at which k-mers occur in reads, while the second column gives counts of such distinct k-mers. Parameters k and related histo file are required for any estimation.
+To use `findGSEP`, one needs to prepare a histo file, which contains two tab-separated columns. The first column gives frequencies at which k-mers occur in reads, while the second column gives counts of such distinct k-mers. Parameters k and related histo file are required for any estimation.
 
 Dependencies (R library) required: `pracma`, `fGarch`, etc. - see DESCRIPTION for details.
 
 ## Usage
 
 ```r
-findGSEX(
+findGSEP(
   path,
   samples,
   sizek,
@@ -75,17 +75,17 @@ findGSEX(
 
 To run the algorithm, follow these steps:
 
-1. **Prepare a Path**: Create a directory where the histo file will be stored. For example, create a directory named `test_findGSEX`.
+1. **Prepare a Path**: Create a directory where the histo file will be stored. For example, create a directory named `test_findGSEP`.
 
-2. **Put Histo File in the Path**: Place your histo file in the `test_findGSEX` directory. In this example, the histo file name is `ara_simulate_4ploidy_25x_rep4.histo`.
+2. **Put Histo File in the Path**: Place your histo file in the `test_findGSEP` directory. In this example, the histo file name is `ara_simulate_4ploidy_25x_rep4.histo`.
 
 3. **Provide Output Directory**: Specify the output directory where the results will be saved. In this example, we use `outfile` as the output directory.
 
 4. **Run the Algorithm**: Use the following command to run the algorithm with the specified parameters:
 
     ```r
-    findGSEX(
-        path = 'test_findGSEX',
+    findGSEP(
+        path = 'test_findGSEP',
         samples = 'ara_simulate_4ploidy_25x_rep4.histo',
         sizek = 21,
         exp_hom = 35,
@@ -104,7 +104,7 @@ To run the algorithm, follow these steps:
 
 ## References
 
-Laiyi Fu, Yanxin Xie, Shunkang Ling, and Hequan Sun# etc. al. findGSEX: a web application for estimating ge-nome size of polyploid species using k-mer frequencies
+Laiyi Fu, Yanxin Xie, Shunkang Ling, and Hequan Sun# etc. al. findGSEP: a web application for estimating ge-nome size of polyploid species using k-mer frequencies
 
 ## Session Info
 
@@ -127,7 +127,7 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] findGSEX_1.2.0     dplyr_1.1.4        png_0.1-8          scales_1.3.0       fGarch_4033.92    
+[1] findGSEP_1.2.0     dplyr_1.1.4        png_0.1-8          scales_1.3.0       fGarch_4033.92    
 [6] pracma_2.4.4       ggplot2_3.5.0      RColorBrewer_1.1-3
 
 loaded via a namespace (and not attached):

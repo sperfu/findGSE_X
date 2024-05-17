@@ -1,8 +1,8 @@
-# findGSEX R Package - Estimate Genome Size
+# findGSEP R Package - Estimate Genome Size
 # Version 1.2
 #
 # Description:
-# The findGSEX R package provides a method for estimating genome size by fitting
+# The findGSEP R package provides a method for estimating genome size by fitting
 # k-mer frequencies in short reads with a normal distribution model.
 #
 # Author:
@@ -23,7 +23,7 @@
 #
 # Installation:
 # To install and use this package, source the provided R script:
-# devtools::install_github("sperfu/findGSEX")
+# devtools::install_github("sperfu/findGSEP")
 #
 # Usage:
 # Set options (optional):
@@ -41,8 +41,8 @@
 # range_left <- exp_hom * 0.2
 # range_right <- exp_hom * 0.2
 #
-# Call the findGSEX function with specified parameters:
-# findGSEX(path, samples, sizek, exp_hom, ploidy, range_left, range_right, xlimit, ylimit, output_dir)
+# Call the findGSEP function with specified parameters:
+# findGSEP(path, samples, sizek, exp_hom, ploidy, range_left, range_right, xlimit, ylimit, output_dir)
 #
 # For any questions, usage inquiries, or reporting potential bugs, please contact the author.
 #
@@ -69,11 +69,11 @@ options(warn = -1)
 ################################################## main #############################################################
 #' @title Estimate genome size of polyploid species using k-mer frequencies.
 #'
-#' @description findGSEX is a function for multiple polyploidy
+#' @description findGSEP is a function for multiple polyploidy
 #' genome size estimation by fitting k-mer frequencies iteratively
 #' with a normal distribution model.
 #'
-#' @description To use findGSEX, one needs to prepare a histo file,
+#' @description To use findGSEP, one needs to prepare a histo file,
 #' which contains two tab-separated columns.
 #' The first column gives frequencies at which k-mers occur in reads,
 #' while the second column gives counts of such distinct k-mers.
@@ -107,7 +107,7 @@ options(warn = -1)
 #' where the histo file is.
 #' @export
 #'
-findGSEX <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_right, xlimit, ylimit ,output_dir="outfile"){
+findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_right, xlimit, ylimit ,output_dir="outfile"){
   start_time <- initialize_start_time()
   if (!grepl("/$", path)) {
     path <- paste0(path, "/")
