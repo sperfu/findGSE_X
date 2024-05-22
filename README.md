@@ -79,7 +79,7 @@ install.packages("devtools")
 devtools::install_github("sperfu/findGSEP")
 ```
 
-### Note: This package was developed using R version 4.2.0. To ensure the stability of the package, it is highly recommended that users install R version 4.2.0.
+#### Note: This package was developed using R version 4.2.0. To ensure the stability of the package, it is highly recommended that users install R version 4.2.0.
 
 
 ### Data
