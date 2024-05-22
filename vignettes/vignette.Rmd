@@ -44,7 +44,7 @@ findGSEP(
   range_right,
   xlimit,
   ylimit,
-  output_dir = "outfile"
+  output_dir
 )
 ```
 
@@ -79,7 +79,7 @@ To run the algorithm, follow these steps:
 
 2. **Put Histo File in the Path**: Place your histo file in the `test_findGSEP` directory. In this example, the histo file name is `ara_simulate_4ploidy_25x_rep4.histo`.
 
-3. **Provide Output Directory**: Specify the output directory where the results will be saved. In this example, we use `outfile` as the output directory.
+3. **Provide Output Directory**: Specify the output directory where the results will be saved. In this example, we use `tempdir()` as the output directory.
 
 4. **Run the Algorithm**: Use the following command to run the algorithm with the specified parameters:
 
@@ -90,7 +90,7 @@ To run the algorithm, follow these steps:
         sizek = 21,
         exp_hom = 35,
         ploidy = 4,
-        output_dir = 'outfile',
+        output_dir = tempdir(),
         range_left = 35 * 0.2, ## exp_hom*0.2
         range_right = 35 * 0.2, ## exp_hom*0.2
         xlimit = -1, ## will calculate automatically

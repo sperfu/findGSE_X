@@ -22,6 +22,21 @@ initialize_start_time <- function() {
 #' @param min_valid_pos An integer indicating the left-side position from which the observed k-mer frequencies will be fitted.
 #' @param itr An integer representing the iteration count.
 #' @return A numeric value representing the minimized error.
+#'
+#' @examples
+#' \dontrun{
+#' tooptimize <- c(1, 1, 1, 1)
+#' x <- rnorm(100)
+#' end <- 100
+#' xfit <- seq(min(x), max(x), length=end)
+#' xfit_left <- 20
+#' xfit_right <- 80
+#' d <- data.frame(V1=1:100, V2=rnorm(100))
+#' min_valid_pos <- 10
+#' itr <- 100
+#' error <- error_minimize(tooptimize, x, end, xfit, xfit_left, xfit_right, d, min_valid_pos, itr)
+#' print(error)
+#' }
 #' @export
 error_minimize<-function(tooptimize, x, end, xfit, xfit_left, xfit_right, d, min_valid_pos, itr)
 {
@@ -40,17 +55,17 @@ error_minimize<-function(tooptimize, x, end, xfit, xfit_left, xfit_right, d, min
   meanfit            <- mean(x[x>=xfit_left & x<=xfit_right])*mean_scale_factor
   sdfit              <- sd(x[  x>=xfit_left & x<=xfit_right])*sd_scale_factor
   xifit              <- 1*xi_scale_factor
-  # cat(paste("   Info: initialized mean as ", meanfit, "\n", sep=""))
-  # cat(paste("   Info: initialized sd   as ", sdfit, "\n", sep=""))
-  #cat(paste("   Info: initialized skew as ", xifit, "\n", sep=""))
+  # message(paste("   Info: initialized mean as ", meanfit, "\n", sep=""))
+  # message(paste("   Info: initialized sd   as ", sdfit, "\n", sep=""))
+  #message(paste("   Info: initialized skew as ", xifit, "\n", sep=""))
   #yfit               <- dsnorm(xfit,mean=meanfit,sd=sdfit, xi=xifit)*yfit_scale_factor*length(x)
   yfit               <- dnorm(xfit,mean=meanfit,sd=sdfit)*yfit_scale_factor*length(x)
   diff0              <- sqrt(sum((d[min_valid_pos:end, 2] - yfit[min_valid_pos:end])^2))
   #diff0              <- sqrt(sum((d[xfit_left:end, 2] - yfit[xfit_left:end])^2))
-  # cat(paste("   111 Info: initialized min_valid_pos   as ", min_valid_pos, "\n", sep=""))
-  # cat(paste("   111 Info: initialized end as ", end, "\n", sep=""))
-  # cat(paste("   111 Info: initialized x_fit_left   as ", xfit_left, "\n", sep=""))
-  # cat(paste("   111 Info: initialized x_fit_right as ", xfit_right, "\n", sep=""))
+  # message(paste("   111 Info: initialized min_valid_pos   as ", min_valid_pos, "\n", sep=""))
+  # message(paste("   111 Info: initialized end as ", end, "\n", sep=""))
+  # message(paste("   111 Info: initialized x_fit_left   as ", xfit_left, "\n", sep=""))
+  # message(paste("   111 Info: initialized x_fit_right as ", xfit_right, "\n", sep=""))
   # diff0              <- sqrt(sum((d[xfit_left:xfit_right, 2] - yfit[xfit_left:xfit_right])^2))
   #
   return(diff0)
@@ -65,6 +80,15 @@ error_minimize<-function(tooptimize, x, end, xfit, xfit_left, xfit_right, d, min
 #' @param h_hom A numeric vector representing the raw fitting for the homozygous region.
 #' @param h_target A numeric vector representing the target k-mer frequency.
 #' @return A numeric value representing the minimized difference.
+#' @examples
+#' \dontrun{
+#' tooptimize <- c(0.5)
+#' h_het <- rnorm(100)
+#' h_hom <- rnorm(100)
+#' h_target <- rnorm(100)
+#' diff <- error_minimize2(tooptimize, h_het, h_hom, h_target)
+#' print(diff)
+#' }
 #' @export
 error_minimize2<-function(tooptimize, h_het, h_hom, h_target)
 {
@@ -94,6 +118,23 @@ error_minimize2<-function(tooptimize, h_het, h_hom, h_target)
 #' @param meanfit A numeric value representing the initial mean.
 #' @param sdfit A numeric value representing the initial standard deviation.
 #' @return A numeric value representing the minimized error.
+#' @examples
+#' \dontrun{
+#' tooptimize <- c(1, 1, 1, 1)
+#' x <- rnorm(100)
+#' end <- 100
+#' xfit <- seq(min(x), max(x), length=end)
+#' xfit_left <- 20
+#' xfit_right <- 80
+#' d <- data.frame(V1=1:100, V2=rnorm(100))
+#' min_valid_pos <- 10
+#' itr <- 100
+#' meanfit <- 18
+#' sdfit <- 4.21
+#' error <- error_minimize3(tooptimize, x, end, xfit, xfit_left, xfit_right, d,
+#' min_valid_pos, itr, meanfit, sdfit)
+#' print(error)
+#' }
 #' @export
 error_minimize3<-function(tooptimize, x, end, xfit_left, xfit_right, d, min_valid_pos, itr, meanfit, sdfit)
 {
@@ -112,10 +153,10 @@ error_minimize3<-function(tooptimize, x, end, xfit_left, xfit_right, d, min_vali
   #sdfit              <- sd(x[  x>=xfit_left & x<=xfit_right])*sd_scale_factor
   yfit               <- dnorm(xfit,mean=meanfit,sd=sdfit)*yfit_scale_factor*length(x)
   diff0              <- sqrt(sum((d[min_valid_pos:end, 2] - yfit[min_valid_pos:end])^2))
-  # cat(paste("   111 Info: initialized min_valid_pos   as ", min_valid_pos, "\n", sep=""))
-  # cat(paste("   111 Info: initialized end as ", end, "\n", sep=""))
-  # cat(paste("   111 Info: initialized x_fit_left   as ", xfit_left, "\n", sep=""))
-  # cat(paste("   111 Info: initialized x_fit_right as ", xfit_right, "\n", sep=""))
+  # message(paste("   111 Info: initialized min_valid_pos   as ", min_valid_pos, "\n", sep=""))
+  # message(paste("   111 Info: initialized end as ", end, "\n", sep=""))
+  # message(paste("   111 Info: initialized x_fit_left   as ", xfit_left, "\n", sep=""))
+  # message(paste("   111 Info: initialized x_fit_right as ", xfit_right, "\n", sep=""))
   # diff0              <- sqrt(sum((d[xfit_left:xfit_right, 2] - yfit[xfit_left:xfit_right])^2))
   #diff0              <- sqrt(sum((d[xfit_left:end, 2] - yfit[xfit_left:end])^2))
   #
@@ -128,6 +169,9 @@ error_minimize3<-function(tooptimize, x, end, xfit_left, xfit_right, d, min_vali
 #'
 #' @param d0 A data frame representing the initial k-mer count from software like Jellyfish.
 #' @return A data frame with recovered k-mer counts.
+#' @examples
+#' d0 <- data.frame(V1 = c(1, 2, 4), V2 = c(100, 200, 300))
+#' dr <- initial_count_recover(d0)
 #' @export
 initial_count_recover <- function(d0)
 {
@@ -151,6 +195,9 @@ initial_count_recover <- function(d0)
 #' @param left_right An integer indicating whether to modify the left part (0) or the right part (1).
 #' @param histx A data frame representing the k-mer histogram.
 #' @return A modified data frame with adjusted k-mer frequencies.
+#' @examples
+#' histx <- data.frame(V1 = 1:10, V2 = c(100, 200, 300, 400, 500, 400, 300, 200, 100, 50))
+#' histx_new <- kmer_count_modify(3, 7, 0, histx)
 #' @export
 kmer_count_modify <- function(start, end, left_right, histx)
 {
@@ -187,9 +234,28 @@ kmer_count_modify <- function(start, end, left_right, histx)
 #' @param sdfit_old A numeric value representing the previous standard deviation fit.
 #' @param scale_flag A logical value indicating whether to apply scaling (default is FALSE).
 #' @return A list containing the estimated genome size and other fitting parameters.
+#' @examples
+#' \dontrun{
+#'
+#' histo <- "sample1.histo"
+#' sizek <- 21
+#' outdir <- ""
+#' exp_hom <- 200
+#' species <- ""
+#' ploidy_ind <- 2
+#' avg_cov <- 0
+#' left_fit_ratio <- 0.835
+#' meanfit_old <- 0
+#' sdfit_old <- 0
+#' scale_flag <- FALSE
+#' fit_lists <- findGSE_sp(path, samples, sizek, exp_hom, ploidy, range_left,
+#'  range_right, xlimit, ylimit, output_dir)
+#' }
 #' @export
 findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploidy_ind=2,avg_cov = 0,left_fit_ratio = 0.835, meanfit_old = 0, sdfit_old = 0, scale_flag = FALSE)
 {
+  old_options <- options() #
+  on.exit(options(old_options)) #
   # initial values
   if(missing(histo))
   {
@@ -200,11 +266,11 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
     stop(paste("Cannot find sizek info: ", sizek, ". Program exited.\n",sep=""))
   }
   # defaults
-  cat('ploidy index start: ',ploidy_ind,'\n')
+  message('ploidy index start: ',ploidy_ind,'\n')
   if(missing(exp_hom))  exp_hom <- 0
   if(missing(outdir))   outdir  <- getwd()
   ######################################## libararies required ###############################################
-  #cat("\n special version: \n")
+  #message("\n special version: \n")
   # find all peaks in a time series
   # suppressWarnings(suppressMessages(library("pracma")))
   # provide skew normal distrbution fitting (dsnorm(...))
@@ -212,36 +278,36 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
   ## version id
   vers <- 'v1.94.'
   ##
-  cat("\nfindGSE initialized...\n")
+  message("\nfindGSE initialized...\n")
   ## running time
   start_t <- Sys.time()
   ## check args
   # expert-tunning het fitting (later it would be automatically adjusted)
   het_fitting_delta <- 0.11
-  histof  <- F
-  kpro    <- F
-  if(histo != "") histof <- T
-  if(sizek >  0)  kpro   <- T
-  if(histof == F || kpro == F)
+  histof  <- FALSE
+  kpro    <- FALSE
+  if(histo != "") histof <- TRUE
+  if(sizek >  0)  kpro   <- TRUE
+  if(histof == FALSE || kpro == FALSE)
   {
     stop("Option -histo or -sizek was provided incorrectly. Program exited.\n")
   }
   ## default args
   countingfile    <- histo
-  if(file.exists(countingfile)==F)
+  if(file.exists(countingfile)==FALSE)
   {
     stop(paste("Cannot find histo file: ", countingfile, ". Program exited.\n",sep=""))
   }
-  cat(paste("   Info: histo file provided as ", countingfile, "\n", sep=""))
+  message(paste("   Info: histo file provided as ", countingfile, "\n", sep=""))
   #
   targetsizek     <- sizek
   if(targetsizek  < 15)
   {
     stop(paste("Unexpected size of k: ", targetsizek, ". Size k>=15 required. Program exited.\n",sep=""))
   }
-  cat(paste("   Info: size k set as ", targetsizek, "\n", sep=""))
+  message(paste("   Info: size k set as ", targetsizek, "\n", sep=""))
   #
-  path_set        <- F
+  path_set        <- FALSE
   path            <- outdir
   if(path==".")
   {
@@ -251,41 +317,41 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
     {
       path         <- dirname(normalizePath(countingfile))
     }
-  path_set       <- T
-  cat(paste("   Info: output folder set as ", path, "\n", sep=""))
+  path_set       <- TRUE
+  message(paste("   Info: output folder set as ", path, "\n", sep=""))
   #
-  het_observed    <- F
+  het_observed    <- FALSE
   # expected maximum value for the hom k-mer peak! set as fpeak~2*fpeak
   exp_hom_cov_max <- exp_hom
-  cat(paste("   Info: expected coverage of homozygous k-mers set as ", exp_hom_cov_max, "\n", sep=""))
+  message(paste("   Info: expected coverage of homozygous k-mers set as ", exp_hom_cov_max, "\n", sep=""))
   exp_hom_cov_max_save <- exp_hom_cov_max
   # derived  maximum value for the het k-mer peak!
   der_het_cov_max <- 0
   ## if output folder does not exist, create it; if existing, give a warning.
-  dir.create(file.path(path), showWarnings = F)
+  dir.create(file.path(path), showWarnings = FALSE)
   if(exp_hom_cov_max > 0)
   {
-    het_observed      <- T
+    het_observed      <- TRUE
     # derived  maximum value for the het k-mer peak.
     der_het_cov_max   <- round(ploidy_ind/(ploidy_ind+1)*exp_hom_cov_max);
-    cat(paste("   Info: het observed set as true ==> heterozygous fitting asked. \n", sep=""))
+    message(paste("   Info: het observed set as true ==> heterozygous fitting asked. \n", sep=""))
     if(het_fitting_delta != 0.11)
     {
-      cat(paste("   Info: value for tuning het fitting set as ", het_fitting_delta, "\n", sep=""))
+      message(paste("   Info: value for tuning het fitting set as ", het_fitting_delta, "\n", sep=""))
     }
   }else
   {
-    het_observed      <- F
-    only_one_het_peak <- F
-    only_one_hom_peak <- T
-    cat(paste("   Info: het observed set as false ==> heterozygous fitting not asked. \n", sep=""))
+    het_observed      <- FALSE
+    only_one_het_peak <- FALSE
+    only_one_hom_peak <- TRUE
+    message(paste("   Info: het observed set as false ==> heterozygous fitting not asked. \n", sep=""))
   }
   ##
   prefix <- ''
   samples          <- basename(countingfile)
   for (sample in samples)
   {
-    cat(paste("\nIterative fitting process for sample ", sample, " started... \n", sep=""))
+    message(paste("\nIterative fitting process for sample ", sample, " started... \n", sep=""))
     # all accessions -- where i can change and modify
     # initialize variables where outputs are recorded
     size_all       <-  0   # Gsize with               error-k-mer-freq
@@ -312,7 +378,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
     myxifit        <-  1
     myscalefit     <-  1
     # special fit at itr 1
-    norm_fit_itr1  <-  F
+    norm_fit_itr1  <-  FALSE
     # open pdf to write visualization of fitting
     pdf(paste(path, '/',prefix, vers, 'est.', sample, '.sizek', targetsizek, '.curvefitted.pdf',
               sep=""))
@@ -333,12 +399,12 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
         {
           selected  <- min(round(1.5*exp_hom_cov_max), length(dhet[,1]))
         }
-        main_peak_is_hom <- T
+        main_peak_is_hom <- TRUE
         if(het_observed)
         {
           # initialize count as error for fitting
           error    <- dr
-          cat(paste("    Size ", sizek , " fitting for het k-mers \n", sep=""));
+          message(paste("    Size ", sizek , " fitting for het k-mers \n", sep=""));
           # find hom and het peaks (if any).
           peaks    <- pracma::findpeaks(error[2:exp_hom_cov_max, 2])
           #peaks    <- filter_peaks(tmp_peaks, dhet)
@@ -359,7 +425,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
           }
           hom_peak_pos <- 0
           het_peak_pos <- 0
-          cat('enter ploidy equal to ',ploidy_ind)
+          message('enter ploidy equal to ',ploidy_ind)
           if(ploidy_ind == 1){
             hom_peak_pos <- peaks[which.max(peaks[,1]), 2]+1   # hom peak
             peaks[which.max(peaks[,1]), 1] <- 0
@@ -374,16 +440,16 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
             het_peak_pos <- ploidy_ind * avg_cov
             hom_peak_pos <- (ploidy_ind + 1) * avg_cov
           }
-          cat('hom_peak_pos is: ',hom_peak_pos,'\n')
-          cat('het_peak_pos is: ',het_peak_pos,'\n')
+          message('hom_peak_pos is: ',hom_peak_pos,'\n')
+          message('het_peak_pos is: ',het_peak_pos,'\n')
           # if two peaks found, the larger one is hom; the other is het
           if(het_peak_pos > hom_peak_pos)
           {
             tmp               <- het_peak_pos
             het_peak_pos      <- hom_peak_pos
             hom_peak_pos      <- tmp
-            main_peak_is_hom  <- F
-            cat("    Warning: two peaks found in k-mer freq with given -exp_hom,
+            main_peak_is_hom  <- FALSE
+            message("    Warning: two peaks found in k-mer freq with given -exp_hom,
                   peak with lower height as hom-peak!\n")
           }
           if(het_peak_pos>0 & hom_peak_pos>0)
@@ -397,29 +463,29 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
             }
           }
           # if one peak  found, need to check if it is hom or het accordingly
-          only_one_hom_peak <- F
-          only_one_het_peak <- F
+          only_one_hom_peak <- FALSE
+          only_one_het_peak <- FALSE
           if(het_peak_pos == hom_peak_pos)
           {
             unkownpeak    <- het_peak_pos
             if(unkownpeak >  der_het_cov_max)
             {
               het_peak_pos      <- round(ploidy_ind/(ploidy_ind+1)*hom_peak_pos)
-              cat("    Warning: only one peak in k-mer freq with given -exp_hom,
+              message("    Warning: only one peak in k-mer freq with given -exp_hom,
                   determined as hom-peak!\n")
-              cat("            -exp_hom needs to be increased
+              message("            -exp_hom needs to be increased
                   if you think it is a het peak.\n")
-              only_one_hom_peak <- T
+              only_one_hom_peak <- TRUE
             }else
               if(unkownpeak  < der_het_cov_max)
               {
                 hom_peak_pos      <- (ploidy_ind+1)/ploidy_ind*het_peak_pos
-                cat("    Warning: only one peak in k-mer freq with given -exp_hom,
+                message("    Warning: only one peak in k-mer freq with given -exp_hom,
                     determined as het-peak!\n")
-                cat("          -exp_hom needs to be decreased
+                message("          -exp_hom needs to be decreased
                     if you think it is a hom peak.\n")
-                main_peak_is_hom  <- F
-                only_one_het_peak <- T
+                main_peak_is_hom  <- FALSE
+                only_one_het_peak <- TRUE
               }else
               {
                 plot(dhet[, 1], dhet[, 2],
@@ -437,8 +503,8 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
                      which must satisfy 2*hom_peak>x>hom_peak !\n\n");
               }
           }
-          cat('    Info: het_peak_pos for het fitting: ', het_peak_pos, '\n')
-          cat('    Info: hom_peak_pos for hom fitting: ', hom_peak_pos, '\n')
+          message('    Info: het_peak_pos for het fitting: ', het_peak_pos, '\n')
+          message('    Info: hom_peak_pos for hom fitting: ', hom_peak_pos, '\n')
           het_peak_pos_save <- het_peak_pos
           hom_peak_pos_save <- hom_peak_pos
           het_min_valid_pos <- which.min(error[1:het_peak_pos, 2])
@@ -471,8 +537,8 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
           x         <- rep(1:het_xfit_right,ceiling(abs(histx2[1:het_xfit_right,2])/(100000/1)))
           xfit      <- seq(min(x),max(x),length=het_xfit_right)
           # optimizing parameters
-          cat('    Info: het_xfit_left  for het fitting: ', het_xfit_left, '\n')
-          cat('    Info: het_xfit_right for het fitting: ', het_xfit_right, '\n')
+          message('    Info: het_xfit_left  for het fitting: ', het_xfit_left, '\n')
+          message('    Info: het_xfit_right for het fitting: ', het_xfit_right, '\n')
           het_xfit_right_save <- het_xfit_right
           if(ploidy_ind == 1 || scale_flag == TRUE){
             v<-optim(par=c(1, 1, 1, 0.8),
@@ -485,7 +551,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
 
             meanfit   <- mean(x[x>=het_xfit_left & x<=het_xfit_right])*v$par[3]
             meanfit_old <- meanfit
-            cat('first meanfit_old: ',meanfit_old,' \n')
+            message('first meanfit_old: ',meanfit_old,' \n')
             sdfit     <- sd(x[  x>=het_xfit_left & x<=het_xfit_right])*v$par[1] # raw sd
             sdfit_old <- sdfit
 
@@ -494,13 +560,13 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
             meanfit <- meanfit_old * ploidy_ind
             sdfit <- sdfit_old + sdfit_old*max(ploidy_ind - 1, 0)*0.1
             #sdfit <- max(sdfit, 7.6)
-            cat('meanfit for ploidy: ',ploidy_ind,' is: ',meanfit,'\n')
+            message('meanfit for ploidy: ',ploidy_ind,' is: ',meanfit,'\n')
             v<-optim(par=c(1, 1, 1, 0.8),
                      fn=error_minimize3, x=x, end=het_xfit_right,
                      xfit_left=het_xfit_left, xfit_right=het_xfit_right,
                      d=histx2, min_valid_pos=het_min_valid_pos, itr=1, meanfit = meanfit, sdfit = sdfit_old)
             #
-            cat('optimize done...\n')
+            message('optimize done...\n')
             # scale and correct yfit with optimized values in v$par
             xfit2     <- seq(0.01,selected,0.01)
             #meanfit <- meanfit_old * ploidy_ind
@@ -508,14 +574,14 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
 
           if(meanfit < 0)
           {
-            cat(paste("    Warning: data does not follow
+            message(paste("    Warning: data does not follow
                       assumed distribution anymore; fitting stopped.\n", sep=""))
           }
           # sdfit     <- sd(x[  x>=het_xfit_left & x<=het_xfit_right])*v$par[1] # raw sd
           #
           xifit     <- 1*v$par[4];
           #yfit0     <- dsnorm(xfit2,mean=meanfit,sd=sdfit, xi=xifit)*(100000/1)*v$par[2]*length(x)
-          cat('sdfit is: ',sdfit,'\n')
+          message('sdfit is: ',sdfit,'\n')
           yfit0     <- dnorm(xfit2,mean=meanfit,sd=sdfit)*(100000/1)*v$par[2]*length(x)
           #
           ## scale fitting according to observation
@@ -538,7 +604,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
           hetfit             <- 0
           hetfit[1:selected] <- 0
           het_min_valid_pos  <- 100000
-          only_one_hom_peak  <- T
+          only_one_hom_peak  <- TRUE
         }
         i    <- i + 1
         if(i > length(targetsizek)) { break }
@@ -564,7 +630,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
         {
           if(first_fit)
           {
-            cat(paste("    Size ", sizek , " at itr ", itr, "\n", sep=""))
+            message(paste("    Size ", sizek , " at itr ", itr, "\n", sep=""))
             if(itr>=2 && 2*mymeanfit[itr-1] > maxright4fit) { myitr <- itr - 1; break;}
             if(itr == 1) # original data
             {
@@ -609,7 +675,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
               }
               datacheck         <- min(300, maxright4fit)
               dci               <- 0
-              cat('    Info: min_valid_pos: ', min_valid_pos,'\n')
+              message('    Info: min_valid_pos: ', min_valid_pos,'\n')
               min_valid_pos_save = min_valid_pos
               while(min_valid_pos == original_peak_pos)
               {
@@ -621,13 +687,13 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
               }
               if(dci   > datacheck)
               {
-                cat(paste("Error: weird initial count-data of sample ",
+                message(paste("Error: weird initial count-data of sample ",
                           sample, ". Please check!!!\n",
                           sep=""))
                 normal <- 1
                 break
               }
-              cat('    Info: signal error border: ', border_pos,'\n')
+              message('    Info: signal error border: ', border_pos,'\n')
               first_peak_pos  <- original_peak_pos
               # copy
               d               <- error
@@ -661,7 +727,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
               }
               if(dci   > datacheck)
               {
-                cat(paste("    Warning: weired initial count-data of sample ",
+                message(paste("    Warning: weired initial count-data of sample ",
                           sample, ". Please check!!!\n", sep=""))
                 normal   <- 0
                 xlimmax  <- 100
@@ -697,7 +763,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
           if (length(anyNA) >= 1)
           {
             d[anyNA, 2] <- dr[anyNA, 2]; # caution: missing values could happen here!!!
-            cat(paste("    Warning: ", length(anyNA),
+            message(paste("    Warning: ", length(anyNA),
                       " data-points of d has been replaced as 1 to properly prepare hisgram data x
                       for function optim at itr ", itr, "\n", sep=""))
           }
@@ -762,8 +828,8 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
             }
 
           }
-          cat('    Info: hom_xfit_left  for hom fitting at itr ', itr,  ': ', xfit_left, '\n')
-          cat('    Info: hom_xfit_right for hom fitting at itr ', itr,  ': ', xfit_right, '\n')
+          message('    Info: hom_xfit_left  for hom fitting at itr ', itr,  ': ', xfit_left, '\n')
+          message('    Info: hom_xfit_right for hom fitting at itr ', itr,  ': ', xfit_right, '\n')
           # if(itr == 1){
           #   xfit_left
           # }
@@ -775,7 +841,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
           #   # meanfit   <- mean(x[x>=het_xfit_left & x<=het_xfit_right])*v$par[3]
           #   meanfit   <- mean(x[x>=xfit_left & x<=xfit_right])*v$par[3]
           #   meanfit_old <- meanfit
-          #   cat('last meanfit_old: ',meanfit_old,' \n')
+          #   message('last meanfit_old: ',meanfit_old,' \n')
           # }
           # else{
           #   meanfit <- meanfit_old * ploidy_ind
@@ -784,7 +850,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
           meanfit   <- mean(x[x>=xfit_left & x<=xfit_right])*v$par[3]
           if(meanfit < 0)
           {
-            cat(paste("    Warning: data does not follow assumed distribution anymore at itr ",
+            message(paste("    Warning: data does not follow assumed distribution anymore at itr ",
                       itr, ", fitting stopped.\n", sep=""))
             normal  <- 0
             if(myyfit==0 && itr==1)
@@ -799,7 +865,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
                                 mean=meanfit,
                                 sd=sdfit)*(100000/itr)*v$par[2]*length(x)
               myyfit   <- myyfit + yfit0
-              norm_fit_itr1 <- T
+              norm_fit_itr1 <- TRUE
               if(het_observed && itr == 1)
               {
                 homfit  <- yfit0
@@ -827,7 +893,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
             if(n_less_than_0 >= 3)
             {
               first_fit <- FALSE
-              cat(paste("       Fitting has to be repeated: sizek ", sizek,
+              message(paste("       Fitting has to be repeated: sizek ", sizek,
                         " at itr ", itr, "\n",
                         sep=""))
               i
@@ -848,7 +914,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
           #### begin
           if(max(yfit) > 1.2*max(error[min_valid_pos:maxright4fit, 2]))
           {
-            cat(paste("    Note on hom fitting: fitting stopped at iter ",
+            message(paste("    Note on hom fitting: fitting stopped at iter ",
                       itr, ", expected: ", totalitr, "\n",sep=""))
             if(length(myyfit) == 1){
 
@@ -867,7 +933,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
               if(sum(yfit0) > 0)
               {
                 myyfit   <- myyfit + yfit0
-                norm_fit_itr1 <- T
+                norm_fit_itr1 <- TRUE
                 if(het_observed && itr == 1)
                 {
                   homfit  <- yfit0
@@ -876,7 +942,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
               {
                 yfit0    <- rep(0, length(xfit2))
                 myyfit   <- myyfit + yfit0
-                norm_fit_itr1 <- T
+                norm_fit_itr1 <- TRUE
                 if(het_observed && itr == 1)
                 {
                   homfit  <- yfit0
@@ -916,7 +982,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
           #
           itr <- itr + 1
         }
-        cat("Iterative fitting done.\n\n")
+        message("Iterative fitting done.\n\n")
         if(normal == 0)
         {
           # original count
@@ -931,7 +997,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
           {
             # fitted peak
             fitted_peak_value <- which.max(myyfit)/100
-            if(norm_fit_itr1 == T)
+            if(norm_fit_itr1 == TRUE)
             {
               fitted_peak_value <- hom_peak_pos
             }
@@ -949,8 +1015,8 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
                           h_target=h_target[1:first_peak_pos])
               ## update delta
               het_fitting_delta <- v2$par[1]
-              cat(paste("    Info: het_fitting_delta optimized as ", het_fitting_delta, "\n\n", sep=""))
-              #cat(paste("    Info: hom_fitting_delta optimized as ", v2$par[2],         "\n\n", sep=""))
+              message(paste("    Info: het_fitting_delta optimized as ", het_fitting_delta, "\n\n", sep=""))
+              #message(paste("    Info: hom_fitting_delta optimized as ", v2$par[2],         "\n\n", sep=""))
               # end   find optinum het_fitting_delta 2016-12-20
             }
 
@@ -973,7 +1039,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
               options(scipen=999)
               het_fit <- cbind(1:selected,  round(hetfit[1:selected]))
               write.table(het_fit, file = paste(path, '/',prefix, vers, 'est.', sample, ".genome.size.estimated.k", min(targetsizek), 'to', max(targetsizek),".fitted_hetfit_count.txt", sep=""), sep = " ", quote=F, row.names = F, col.names = F)
-              cat(paste0('writing hetfit_count file done!!!\n het_fit length: ',dim(het_fit)[1]," lines.\n"))
+              message(paste0('writing hetfit_count file done!!!\n het_fit length: ',dim(het_fit)[1]," lines.\n"))
               options(scipen=0)
             }
           }
@@ -1005,15 +1071,15 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
             genome_size_filtering_error <- round(sum(dr[border_pos:length(dhet[,1]),1]*dhet[border_pos:length(dr[,1]),2]/hom_peak_pos))
           }
           # genomic kmers
-          # cat(paste("        err-exl genomic ", sizek, "mers: ", sum(dhet[border_pos:length(dhet[,2]),2]), " Mio\n", sep=""));
+          # message(paste("        err-exl genomic ", sizek, "mers: ", sum(dhet[border_pos:length(dhet[,2]),2]), " Mio\n", sep=""));
           # fitted data with fitted peak
           genome_size_fitted <- round(sum(c(1:length(fittedyvalues))*fittedyvalues[1:length(fittedyvalues)]/fitted_peak_value))
           # genomic kmers
-          # cat(paste("        fit     genomic ", sizek, "mers: ", round(sum(fittedyvalues)), " Mio\n", sep=""));
+          # message(paste("        fit     genomic ", sizek, "mers: ", round(sum(fittedyvalues)), " Mio\n", sep=""));
           # catted data with fitted peak
           genome_size_catted <- round(sum(c(1:length(yfit2))*yfit2[1:length(yfit2)]/fitted_peak_value))
           # genomic kmers
-          # cat(paste("        catted  genomic ", sizek, "mers: ", round(sum(yfit2)), " Mio\n", sep=""));
+          # message(paste("        catted  genomic ", sizek, "mers: ", round(sum(yfit2)), " Mio\n", sep=""));
           # corrected genome size (not meaningful)
           genome_size_corrected  <- round(genome_size_catted/myxifit[1])
           # genome size: catted data + raw mean
@@ -1043,8 +1109,8 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
           {
             end_for_mean     <- round(het_peak_pos*4 - het_peak_pos*4/4)
             end_for_mean     <- min(end_for_mean, length(dr[,1])) ####
-            #cat("end_for_mean (only one het peak): ", end_for_mean, '\n')
-            cat("hetfit: ceiling(abs(round(hetfit[1:end_for_mean]))/1000): ",ceiling(abs(round(hetfit[1:end_for_mean]))/1000),"\n")
+            #message("end_for_mean (only one het peak): ", end_for_mean, '\n')
+            message("hetfit: ceiling(abs(round(hetfit[1:end_for_mean]))/1000): ",ceiling(abs(round(hetfit[1:end_for_mean]))/1000),"\n")
             xtmp             <- rep(1:end_for_mean,ceiling(abs(round(hetfit[1:end_for_mean]))/1000))
             first_mean_raw   <- 2*mean(xtmp[xtmp>=1 & xtmp<=end_for_mean])
           }else
@@ -1227,16 +1293,16 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
     ## plot comparision among gsize-estimations using different info
     genome_size_summary  <-rbind(size_all, size_exl, size_cat, size_fit, size_cor2)
     genome_size_summary2 <-rbind(size_exl, size_fit, size_cor2)
-    cat(paste("Genome size estimate for ", sample, ": ", size_cor2, " bp.\n\n", sep=""))
+    message(paste("Genome size estimate for ", sample, ": ", size_cor2, " bp.\n\n", sep=""))
     # caution
     if(length(which(is.na(genome_size_summary))) > 0)
     {
-      cat("\n caution: some samples have NA predicted for observed genome size!\n")
+      message("\n caution: some samples have NA predicted for observed genome size!\n")
       genome_size_summary[is.na(genome_size_summary)]   <- 0
     }
     if(length(which(is.na(genome_size_summary2))) > 0)
     {
-      cat("\n caution: some samples have NA predicted for fitted   genome size!\n")
+      message("\n caution: some samples have NA predicted for fitted   genome size!\n")
       genome_size_summary2[is.na(genome_size_summary2)] <- 0
     }
     if(length(genome_size_summary[1,])!=0 & length(genome_size_summary2[1,])!=0)
@@ -1274,7 +1340,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
                        sample, ".genome.size.estimated.k",
                        min(targetsizek), 'to', max(targetsizek),
                        ".fitted.txt", sep=""),
-          append = T,
+          append = TRUE,
           sep = " ")
   }
   # output est. on ratio of repeats
@@ -1283,7 +1349,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
                      sample, ".genome.size.estimated.k",
                      min(targetsizek), 'to', max(targetsizek),
                      ".fitted.txt", sep=""),
-        append = T,
+        append = TRUE,
         sep = " ")
   # output est. on avg k-mer cov
   write(paste("Final k-mer cov ", round(first_mean_raw, digits=8), sep=""),
@@ -1291,7 +1357,7 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
                      sample, ".genome.size.estimated.k",
                      min(targetsizek), 'to', max(targetsizek),
                      ".fitted.txt", sep=""),
-        append = T,
+        append = TRUE,
         sep = " ")
   if(het_observed && only_one_hom_peak)
   {
@@ -1300,12 +1366,12 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
                        sample, ".genome.size.estimated.k",
                        min(targetsizek), 'to', max(targetsizek),
                        ".fitted.txt", sep=""),
-          append = T,
+          append = TRUE,
           sep = " ")
   }
   #
   end_t <- Sys.time()
-  cat('Time consumed: ', format(end_t-start_t), '\n')
+  message('Time consumed: ', format(end_t-start_t), '\n')
   return(list(het_xfit_right_save,hom_peak_pos_save,het_peak_pos_save,meanfit_old, sdfit_old))
 }
 
@@ -1391,6 +1457,11 @@ filter_peaks <- function(peaks, histo)
 #'
 #' @param histo_data A data frame representing the k-mer histogram.
 #' @return A data frame with filtered peaks.
+#' @examples
+#' \dontrun{
+#' histo_data <- data.frame(V1 = 1:100, V2 = c(rep(0, 20), rnorm(60, 100, 10), rep(0, 20)))
+#' get_het_pos(histo_data)
+#' }
 #' @export
 get_het_pos <- function(histo_data){
   data <- histo_data
@@ -1407,7 +1478,7 @@ get_het_pos <- function(histo_data){
       break
     }
   }
-  cat("start index: ",start_index,"\n")
+  message("start index: ",start_index,"\n")
   end_index <- NULL
   # Find the first interval where slope starts decreasing after positive slope
   for (i in (start_index + 1):(length(slope) - 1)) {

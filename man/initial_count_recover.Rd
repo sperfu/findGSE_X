@@ -15,3 +15,7 @@ A data frame with recovered k-mer counts.
 \description{
 This function recovers the initial k-mer count, making the k-mer frequency consecutive.
 }
+\examples{
+d0 <- data.frame(V1 = c(1, 2, 4), V2 = c(100, 200, 300))
+dr <- initial_count_recover(d0)
+}

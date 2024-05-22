@@ -21,3 +21,7 @@ A modified data frame with adjusted k-mer frequencies.
 \description{
 This function modifies the k-mer frequency before fitting, adjusting either the left or right part based on the peak position.
 }
+\examples{
+histx <- data.frame(V1 = 1:10, V2 = c(100, 200, 300, 400, 500, 400, 300, 200, 100, 50))
+histx_new <- kmer_count_modify(3, 7, 0, histx)
+}

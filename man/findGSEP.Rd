@@ -51,6 +51,9 @@ normally do not need to change this. (optional).}
 If not provided, by default results will be written in the folder
 where the histo file is.}
 }
+\value{
+No return value, called for side effects. The function generates PDF, PNG, and CSV files in the specified output directory.
+}
 \description{
 findGSEP is a function for multiple polyploidy
 genome size estimation by fitting k-mer frequencies iteratively
@@ -63,4 +66,20 @@ while the second column gives counts of such distinct k-mers.
 Parameters k and related histo file are required for any estimation.
 
 Dependencies (R library) required: pracma, fGarch, etc. - see DESCRIPTION for details.
+}
+\examples{
+\dontrun{
+path <- "path/to/kmer/files"
+samples <- "sample1.histo"
+sizek <- 21
+exp_hom <- 200
+ploidy <- 4
+range_left <- exp_hom*0.2
+range_right <- exp_hom*0.2
+xlimit <- -1
+ylimit <- -1
+output_dir <- "results"
+
+findGSEP(path, samples, sizek, exp_hom, ploidy, range_left, range_right, xlimit, ylimit, output_dir)
+}
 }

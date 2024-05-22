@@ -41,3 +41,18 @@ A numeric value representing the minimized error.
 \description{
 This function minimizes the error for k-mer frequency fitting by adjusting the mean, standard deviation, and scaling factors.
 }
+\examples{
+\dontrun{
+tooptimize <- c(1, 1, 1, 1)
+x <- rnorm(100)
+end <- 100
+xfit <- seq(min(x), max(x), length=end)
+xfit_left <- 20
+xfit_right <- 80
+d <- data.frame(V1=1:100, V2=rnorm(100))
+min_valid_pos <- 10
+itr <- 100
+error <- error_minimize(tooptimize, x, end, xfit, xfit_left, xfit_right, d, min_valid_pos, itr)
+print(error)
+}
+}

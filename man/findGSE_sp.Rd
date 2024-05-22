@@ -47,3 +47,21 @@ A list containing the estimated genome size and other fitting parameters.
 \description{
 This function estimates the genome size of a species using k-mer frequencies.
 }
+\examples{
+\dontrun{
+
+histo <- "sample1.histo"
+sizek <- 21
+outdir <- ""
+exp_hom <- 200
+species <- ""
+ploidy_ind <- 2
+avg_cov <- 0
+left_fit_ratio <- 0.835
+meanfit_old <- 0
+sdfit_old <- 0
+scale_flag <- FALSE
+fit_lists <- findGSE_sp(path, samples, sizek, exp_hom, ploidy, range_left,
+ range_right, xlimit, ylimit, output_dir)
+}
+}

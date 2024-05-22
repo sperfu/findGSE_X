@@ -15,3 +15,9 @@ A data frame with filtered peaks.
 \description{
 This function filters peaks from a k-mer histogram to find a major peak with enough support information on both sides.
 }
+\examples{
+\dontrun{
+histo_data <- data.frame(V1 = 1:100, V2 = c(rep(0, 20), rnorm(60, 100, 10), rep(0, 20)))
+get_het_pos(histo_data)
+}
+}

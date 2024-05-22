@@ -63,7 +63,6 @@ library(scales)
 library(dplyr)
 # library(RColorBrewer)
 library(ggplot2)
-options(warn = -1)
 
 
 ################################################## main #############################################################
@@ -105,9 +104,28 @@ options(warn = -1)
 #' @param output_dir is the path to write output files (optional).
 #' If not provided, by default results will be written in the folder
 #' where the histo file is.
+#' @return No return value, called for side effects. The function generates PDF, PNG, and CSV files in the specified output directory.
+#'
+#' @examples
+#' \dontrun{
+#' path <- "path/to/kmer/files"
+#' samples <- "sample1.histo"
+#' sizek <- 21
+#' exp_hom <- 200
+#' ploidy <- 4
+#' range_left <- exp_hom*0.2
+#' range_right <- exp_hom*0.2
+#' xlimit <- -1
+#' ylimit <- -1
+#' output_dir <- "results"
+#'
+#' findGSEP(path, samples, sizek, exp_hom, ploidy, range_left, range_right, xlimit, ylimit, output_dir)
+#' }
 #' @export
 #'
 findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_right, xlimit, ylimit ,output_dir="outfile"){
+  oldpar <- par(no.readonly = TRUE) #
+  on.exit(par(oldpar)) #
   start_time <- initialize_start_time()
   if (!grepl("/$", path)) {
     path <- paste0(path, "/")
@@ -127,7 +145,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
   if(missing(range_right)) range_right <- 9
   if(missing(sizek)) sizek <- 21
 
-  #cat(range_left,'\n')
+  #message(range_left,'\n')
   if(missing(output_dir))   output_dir  <- getwd()
 
   if(missing(samples))
@@ -146,25 +164,25 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
     pdf(paste(path, output_dir ,sample,"_hap_genome_size_est.pdf", sep=""), family="Helvetica", height=4, width=7.08661) # need to update
 
     if(ploidy <= 2){
-      cat('Ploidy less than 2 ,starting...\n')
+      message('Ploidy less than 2 ,starting...\n')
       brewer_palette <- RColorBrewer::brewer.pal(ploidy, "Set1")
       findGSE_raw(histo=paste0(path ,sample),sizek=sizek, outdir=paste0(path, output_dir), exp_hom=exp_hom)
 
-      cat('Start findGSE plot drawing, please wait...\n')
+      message('Start findGSE plot drawing, please wait...\n')
       ## read data
 
       histo_raw <- read.table(paste0(path ,sample))
-      cat('histo_raw read done...\n')
+      message('histo_raw read done...\n')
       histo_fit <- read.table(paste(path, output_dir,'v1.95.est.',
                                     sample, ".genome.size.estimated.k",
                                     min(sizek), 'to', max(sizek),".fitted_fullfit_count.txt",sep=""))
 
-      cat('histo_fit read done...\n')
+      message('histo_fit read done...\n')
       if(exp_hom != 0){
         histo_het <- read.table(paste(path, output_dir,'v1.95.est.',
                                       sample, ".genome.size.estimated.k",
                                       min(sizek), 'to', max(sizek),".fitted_hetfit_count.txt",sep=""))
-        cat('histo_het read done...\n')
+        message('histo_het read done...\n')
       }
       else{
         histo_het <- read.table(paste(path, output_dir,'v1.95.est.',
@@ -174,7 +192,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
         # histo_first_fit_hom <- read.table(paste(path, output_dir,'v1.95.est.',
         #                   sample, ".genome.size.estimated.k",
         #                   min(sizek), 'to', max(sizek),".fitted_first_fit_hom_count.txt",sep=""))
-        cat('first_fit_hom read done...\n')
+        message('first_fit_hom read done...\n')
       }
 
 
@@ -212,7 +230,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
            col ="gray",
            lwd=1,
            cex=1.5,
-           frame.plot = F)
+           frame.plot = FALSE)
       polygon(c(histo_raw$V1, rev(histo_raw$V1)),
               c(histo_raw$V2, rep(1, length(histo_raw$V2))),
               col = alpha("gray", 0.5), border = NA)
@@ -226,7 +244,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                 c(histo_het$V2, rep(1, length(histo_het$V2))),
                 col = alpha("cyan", 0.3), border = NA)
       }
-      cat('plot het line done...\n')
+      message('plot het line done...\n')
 
       polygon(c(histo_fit$V1, rev(histo_fit$V1)),
               c(histo_fit$V2, rep(1, length(histo_fit$V2))),
@@ -418,7 +436,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
     }
     else{
-      cat("ploidy id larger that 2, enter next process...",path,sample,"\n")
+      message("ploidy id larger that 2, enter next process...",path,sample,"\n")
       histo_data <- read.table(paste(path, sample, sep = ""), header = FALSE)
       het_pos_list <- get_het_pos(histo_data)
       start_pos <- het_pos_list[[1]]
@@ -429,7 +447,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
       # select color
       brewer_palette <- RColorBrewer::brewer.pal(ploidy, "Set1")
       if(het_pos < 80){
-        cat("het_pos is ",het_pos," enter het_pos < 80 process... \n")
+        message("het_pos is ",het_pos," enter het_pos < 80 process... \n")
         portion_size <- c()
         success_file <- TRUE
         continue_reverse_flag = FALSE
@@ -438,7 +456,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
           if(ploidy_ind == 1){
             exp_hom_temp = exp_hom
             avg_cov = 0
-            cat('ploidy index : ',ploidy_ind)
+            message('ploidy index : ',ploidy_ind)
             histo_raw <- read.table(paste(path, sample, sep="") ) # from jellyfish
             ## 1204 add cutting
             if((het_pos - start_pos) < 8){
@@ -451,12 +469,12 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
               # histo_org[(het_pos-29+het_pos):het_pos, 2] <- rev(histo_org[round(het_pos):29, 2])
 
               # histo_org[30:2000, 2] <- 1
-              write.table(histo_org, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = F, row.names = F, quote = F)
+              write.table(histo_org, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = FALSE, row.names = FALSE, quote = FALSE)
             }
             ##end 1204
             for(left_fit_ratio in left_fit_ratio_list){
               if((het_pos - start_pos) < 8){
-                cat("read cutting file...\n")
+                message("read cutting file...\n")
                 fit_para_save_list = findGSE_sp(histo = paste(path, sample,"_",ploidy_ind, sep = ""), sizek = sizek , outdir = paste(path, output_dir, sep = ""), exp_hom = exp_hom_temp,ploidy_ind=ploidy_ind, avg_cov=avg_cov, left_fit_ratio=left_fit_ratio, meanfit_old=meanfit_old, sdfit_old = sdfit_old, scale_flag = scale_flag)
                 het_xfit_right_save <- fit_para_save_list[[1]]
                 hom_peak_pos_save <- fit_para_save_list[[2]]
@@ -472,7 +490,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                 het_peak_pos_save <- fit_para_save_list[[3]]
                 meanfit_old <- fit_para_save_list[[4]]
                 sdfit_old <- fit_para_save_list[[5]]
-                cat('meanfit_old in ploidy 1 is:', meanfit_old,' \n')
+                message('meanfit_old in ploidy 1 is:', meanfit_old,' \n')
                 histo_het <- read.table(paste(path, output_dir, "v1.94.est.",sample,".genome.size.estimated.k",sizek, "to", sizek, ".fitted_hetfit_count.txt", sep="") ) # from prepare_findGSE.R
 
               }                  #grDevices::png(paste("apple_hap_genome_size_est.jpg", sep=""),  height=400, width=708)
@@ -482,17 +500,17 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
               len       <- length(histo_raw$V1)
               # find the haplotype average kmer coverage.
               happeak_index <- which.max(histo_het$V2) # coverage at het-peak 14, x, ...
-              #cat("hap peak at", happeak_index, '\n')
-              #cat("left peak at", range_left, '\n')
+              #message("hap peak at", happeak_index, '\n')
+              #message("left peak at", range_left, '\n')
               range_avg_cov <- (happeak_index-range_left):(happeak_index+range_right)
               avg_cov       <- round(sum(histo_raw[range_avg_cov, 1] * histo_raw[range_avg_cov, 2] / sum(histo_raw[range_avg_cov, 2])), digits = 2)
-              cat('avg_cov: ',avg_cov,'\n')
+              message('avg_cov: ',avg_cov,'\n')
               final_fit_peak_pos_ind <- which.max(histo_het$V2)
               final_fit_peak_pos <-  histo_het[final_fit_peak_pos_ind,1]
               distance_fit_two_line <- abs(avg_cov*ploidy_ind - final_fit_peak_pos)
-              cat('difference of cyan peaks: ',final_fit_peak_pos,', gray peak: ',avg_cov*ploidy_ind,'\n')
+              message('difference of cyan peaks: ',final_fit_peak_pos,', gray peak: ',avg_cov*ploidy_ind,'\n')
               if(distance_fit_two_line <= 5){
-                cat(left_fit_ratio,' meet the requirement, continue...\n')
+                message(left_fit_ratio,' meet the requirement, continue...\n')
                 break
               }
             }
@@ -501,19 +519,19 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
             ## estimate the size of haploid portion
             hap_size <- sum(as.numeric(histo_het$V1) * as.numeric(histo_het$V2) / 1000000) / (avg_cov * ploidy)
-            cat('portion_size for ploidy_ind 1: ',hap_size,'\n')
+            message('portion_size for ploidy_ind 1: ',hap_size,'\n')
             portion_size <- hap_size
 
             # find the valley on the left of het region
             valley_index  <- which.min(histo_raw[1:happeak_index, 2])
-            #cat(valley_index, '\n')
+            #message(valley_index, '\n')
             #
             # make new histogram with fittings at het-kmers
             histo_fit                    <- histo_raw
             histo_fit[1:valley_index, 2] <- histo_het[1:valley_index, 2]
             #
             if((het_pos - start_pos) < 7){
-              cat('het_pos - start_pos) < 7 ohhhhh myyyy!!\n')
+              message('het_pos - start_pos) < 7 ohhhhh myyyy!!\n')
               histo_fit[1:het_pos, 2] <- histo_het[1:het_pos, 2]
             }
 
@@ -534,7 +552,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                  col ="gray",
                  lwd=1,
                  cex=1.5,
-                 frame.plot = F)
+                 frame.plot = FALSE)
             polygon(c(histo_raw$V1, rev(histo_raw$V1)),
                     c(histo_raw$V2, rep(1, length(histo_raw$V2))),
                     col = alpha("gray", 0.5), border = NA)
@@ -554,7 +572,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
             final_fit_peak_pos_ind <- which.max(histo_het$V2)
             final_fit_peak_pos <-  histo_het[final_fit_peak_pos_ind,1]
-            cat('difference of cyan peaks: ',final_fit_peak_pos,', gray peak: ',avg_cov,'\n')
+            message('difference of cyan peaks: ',final_fit_peak_pos,', gray peak: ',avg_cov,'\n')
 
             #
             abline(v = avg_cov*1, lty=3, col="gray")
@@ -574,7 +592,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
           }
           else{
-            cat("ploidy_ind is: ",ploidy_ind)
+            message("ploidy_ind is: ",ploidy_ind)
             if(!success_file){
               next
             }
@@ -592,20 +610,20 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
             target_end_index <- round(hom_peak_pos_save) * 2 - round(het_peak_pos_save)
             if(ploidy_ind > 2){
               max_het_ind <- which(histo_tmp[,2] == max(histo_tmp[round(hom_peak_pos_save):length(histo_tmp$V1),2]))
-              cat('max_het_ind is : ',max_het_ind,'\n')
+              message('max_het_ind is : ',max_het_ind,'\n')
               if (max_het_ind && round(hom_peak_pos_save) < max_het_ind && (max_het_ind - round(hom_peak_pos_save)) > 3 ){
-                cat('match latter peak pattern, reverse data in ... ploidy ',ploidy_ind,'\n')
+                message('match latter peak pattern, reverse data in ... ploidy ',ploidy_ind,'\n')
                 histo_tmp_raw <- histo_tmp
                 histo_tmp_raw[target_start_index:length(histo_tmp$V1),2] <- 1
                 histo_tmp_raw[target_start_index:target_end_index, 2] <- rev(histo_tmp_raw[round(het_peak_pos_save):round(hom_peak_pos_save), 2])
                 histo_tmp_raw[target_start_index,2] <- histo_tmp_raw[target_start_index+1,2]
-                write.table(histo_tmp_raw, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = F, row.names = F, quote = F)
+                write.table(histo_tmp_raw, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = FALSE, row.names = FALSE, quote = FALSE)
                 #lines(histo_tmp_raw$V1,  histo_tmp_raw$V2, col="black", lwd=3)
                 continue_reverse_flag = TRUE
               }
               else{
                 if(continue_reverse_flag){
-                  cat('continue_reverse_flag is TRUE... \n')
+                  message('continue_reverse_flag is TRUE... \n')
                   histo_tmp_raw <- histo_tmp
                   # histo_tmp_raw[which(histo_tmp$V1 == round(avg_cov * (ploidy_ind+0.7))):length(histo_tmp_raw$V1),2] <- 1
                   # histo_tmp_raw[target_start_index:length(histo_tmp$V1),2] <- 1
@@ -614,17 +632,17 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                   #histo_tmp_raw[target_start_index:target_end_index, 2] <- rev(histo_tmp_raw[round(het_peak_pos_save):round(hom_peak_pos_save), 2])
                   #histo_tmp_raw[target_start_index,2] <- histo_tmp_raw[target_start_index+1,2]
                   #lines(histo_tmp_raw$V1,  histo_tmp_raw$V2, col="black", lwd=3, lty=2)
-                  #cat('pppploidy_ind range: ',which(histo_tmp$V1 == round(avg_cov * (ploidy_ind+0.7))),'\n')
-                  write.table(histo_tmp_raw, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = F, row.names = F, quote = F)
+                  #message('pppploidy_ind range: ',which(histo_tmp$V1 == round(avg_cov * (ploidy_ind+0.7))),'\n')
+                  write.table(histo_tmp_raw, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = FALSE, row.names = FALSE, quote = FALSE)
 
                 }
                 else{
                   histo_tmp_raw <- histo_tmp
-                  cat('This difference is ',histo_tmp[avg_cov*ploidy_ind,2] / histo_tmp[het_xfit_right_save-1,2],'\n')
-                  cat('The two peak difference is ',histo_tmp[avg_cov*(ploidy_ind+1),2] / histo_tmp[avg_cov*ploidy_ind,2],'\n')
-                  cat('This peak difference is ',histo_tmp[avg_cov*(ploidy_ind+1),2] / histo_tmp[het_xfit_right_save-1,2],'\n')
+                  message('This difference is ',histo_tmp[avg_cov*ploidy_ind,2] / histo_tmp[het_xfit_right_save-1,2],'\n')
+                  message('The two peak difference is ',histo_tmp[avg_cov*(ploidy_ind+1),2] / histo_tmp[avg_cov*ploidy_ind,2],'\n')
+                  message('This peak difference is ',histo_tmp[avg_cov*(ploidy_ind+1),2] / histo_tmp[het_xfit_right_save-1,2],'\n')
                   if(histo_tmp_raw[avg_cov*ploidy_ind,2] / histo_tmp_raw[het_xfit_right_save-1,2] < 3 && histo_tmp_raw[avg_cov*ploidy_ind,2] / histo_tmp_raw[het_xfit_right_save-1,2] > 1.6){
-                    cat('Difference too close, lower the histo_tmp file for ',ploidy_ind,'\n')
+                    message('Difference too close, lower the histo_tmp file for ',ploidy_ind,'\n')
                     histo_tmp_raw[1:het_xfit_right_save,2] <- 1
                     #histo_tmp[avg_cov*ploidy_ind:het_xfit_right_save,2] <- round(histo_tmp[avg_cov*ploidy_ind,2])
                   }
@@ -632,8 +650,8 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                   #histo_tmp_raw[target_start_index:length(histo_tmp$V1),2] <- 1
                   #histo_tmp_raw[target_start_index:target_end_index, 2] <- rev(histo_tmp_raw[round(het_peak_pos_save):round(hom_peak_pos_save), 2])
 
-                  #cat('pppploidy_ind range: ',which(histo_tmp$V1 == round(avg_cov * (ploidy_ind+0.7))),'\n')
-                  write.table(histo_tmp_raw, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = F, row.names = F, quote = F)
+                  #message('pppploidy_ind range: ',which(histo_tmp$V1 == round(avg_cov * (ploidy_ind+0.7))),'\n')
+                  write.table(histo_tmp_raw, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = FALSE, row.names = FALSE, quote = FALSE)
                   # lines(histo_tmp_raw$V1,  histo_tmp_raw$V2, col="black", lwd=3)
                 }
 
@@ -641,17 +659,17 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
             }
             else{
-              cat('This difference is ',histo_tmp[avg_cov*ploidy_ind,2] / histo_tmp[het_xfit_right_save-1,2],'\n')
-              cat('The two peak difference is ',histo_tmp[avg_cov*(ploidy_ind+1),2] / histo_tmp[avg_cov*ploidy_ind,2],'\n')
-              cat('This peak difference is ',histo_tmp[avg_cov*(ploidy_ind+1),2] / histo_tmp[het_xfit_right_save-1,2],'\n')
+              message('This difference is ',histo_tmp[avg_cov*ploidy_ind,2] / histo_tmp[het_xfit_right_save-1,2],'\n')
+              message('The two peak difference is ',histo_tmp[avg_cov*(ploidy_ind+1),2] / histo_tmp[avg_cov*ploidy_ind,2],'\n')
+              message('This peak difference is ',histo_tmp[avg_cov*(ploidy_ind+1),2] / histo_tmp[het_xfit_right_save-1,2],'\n')
               if(histo_tmp[avg_cov*ploidy_ind,2] / histo_tmp[het_xfit_right_save-1,2] < 3 && histo_tmp[avg_cov*ploidy_ind,2] / histo_tmp[het_xfit_right_save-1,2] > 1.6){
-                cat('Difference too close, lower the histo_tmp file for ',ploidy_ind,'\n')
+                message('Difference too close, lower the histo_tmp file for ',ploidy_ind,'\n')
                 histo_tmp[1:het_xfit_right_save,2] <- 1
-                cat('histo_tmp CHANGE AGAIN!!!!\n')
+                message('histo_tmp CHANGE AGAIN!!!!\n')
                 #histo_tmp[avg_cov*ploidy_ind:het_xfit_right_save,2] <- round(histo_tmp[avg_cov*ploidy_ind,2])
               }
               # lines(histo_tmp$V1,  histo_tmp$V2, col="black", lwd=3)
-              write.table(histo_tmp, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = F, row.names = F, quote = F)
+              write.table(histo_tmp, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = FALSE, row.names = FALSE, quote = FALSE)
             }
             ## end add reverse data part
 
@@ -660,7 +678,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
 
             ## may delete
-            #write.table(histo_tmp, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = F, row.names = F, quote = F)
+            #write.table(histo_tmp, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = F, row.names = F, quote = FALSE)
 
             exp_hom_temp = avg_cov * (ploidy_ind+1) + avg_cov * 0.1
             for(left_fit_ratio in left_fit_ratio_list){
@@ -674,7 +692,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
               all_slope_data <- abs(diff(diff(histo_het$V2))[(round(avg_cov)*ploidy_ind-10):(round(avg_cov)*ploidy_ind+10)])
               if(!all(all_slope_data > 0)){
-                cat('index is :',ploidy_ind,' slope is :',all_slope_data,'\n')
+                message('index is :',ploidy_ind,' slope is :',all_slope_data,'\n')
                 success_file <- FALSE
                 stoped_ploidy_ind = ploidy_ind - 1
                 break
@@ -683,16 +701,16 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
               final_fit_peak_pos_ind <- which.max(histo_het$V2)
               final_fit_peak_pos <-  histo_het[final_fit_peak_pos_ind,1]
               distance_fit_two_line <- abs(avg_cov*ploidy_ind - final_fit_peak_pos)
-              cat('difference of cyan peaks: ',final_fit_peak_pos,', gray peak: ',avg_cov*ploidy_ind,'\n')
+              message('difference of cyan peaks: ',final_fit_peak_pos,', gray peak: ',avg_cov*ploidy_ind,'\n')
               if(distance_fit_two_line <= 5){
-                cat(left_fit_ratio,' meet the requirement, continue...\n')
+                message(left_fit_ratio,' meet the requirement, continue...\n')
                 break
               }
 
             }
             if(!success_file){
 
-              cat('Right now ploidy equal to ploidy_ind\n')
+              message('Right now ploidy equal to ploidy_ind\n')
 
 
 
@@ -703,7 +721,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
               portion_size <- c(portion_size,rep_size)
               if(!ploidy_assign){
                 genome_size     = sum(histo_fit$V1 * (histo_fit$V2 / 1000000)) / (ploidy*avg_cov) # tetraploid size: 3374.929 Mb, haploid size: 843.7321
-                cat('ploidy for plot is ',stoped_ploidy_ind,'\n')
+                message('ploidy for plot is ',stoped_ploidy_ind,'\n')
               }
 
               legend("topright",
@@ -716,7 +734,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                                 paste("Haploid GSE (avg.): ", round(genome_size, digits = 2), " Mb", sep="")
                      ),
                      cex    = 0.8,
-                     horiz  = F,
+                     horiz  = FALSE,
                      box.col="NA")
 
               dev.off()
@@ -748,13 +766,13 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
           }
           if(ploidy_ind == ploidy){
-            cat('Right now ploidy equal to ploidy_ind\n')
+            message('Right now ploidy equal to ploidy_ind\n')
             #lines(histo_raw$V1,  histo_raw$V2, col="blue", lwd=3, lty=2)
             rep_size <- genome_size - sum(portion_size)
             portion_size <- c(portion_size,rep_size)
             if(!ploidy_assign){
               genome_size     = sum(histo_fit$V1 * (histo_fit$V2 / 1000000)) / (ploidy*avg_cov) # tetraploid size: 3374.929 Mb, haploid size: 843.7321
-              cat('ploidy for plot is ',final_ploidy,'\n')
+              message('ploidy for plot is ',final_ploidy,'\n')
             }
             legend("topright",
                    pch    = rep(15, 3),
@@ -766,7 +784,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                               paste("Haploid GSE (avg.): ", round(genome_size, digits = 2), " Mb", sep="")
                    ),
                    cex    = 0.8,
-                   horiz  = F,
+                   horiz  = FALSE,
                    box.col="NA")
 
             dev.off()
@@ -805,14 +823,14 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
             # len       <- length(histo_raw$V1)
             # find the haplotype average kmer coverage.
             happeak_index <- which.max(histo_het$V2) # coverage at het-peak 14, x, ...
-            #cat("hap peak at", happeak_index, '\n')
-            #cat("left peak at", range_left, '\n')
+            #message("hap peak at", happeak_index, '\n')
+            #message("left peak at", range_left, '\n')
             # range_avg_cov <- (happeak_index-range_left):(happeak_index+range_right)
             #avg_cov       <- round(sum(histo_raw[range_avg_cov, 1] * histo_raw[range_avg_cov, 2] / sum(histo_raw[range_avg_cov, 2])), digits = 2)
 
             # find the valley on the left of het region
             valley_index  <- which.min(histo_raw[1:happeak_index, 2])
-            #cat(valley_index, '\n')
+            #message(valley_index, '\n')
             #
             # make new histogram with fittings at het-kmers
             histo_fit                    <- histo_raw
@@ -887,7 +905,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                               paste("Haploid GSE (avg.): ", round(genome_size, digits = 2), " Mb", sep="")
                    ),
                    cex    = 0.6,
-                   horiz  = F,
+                   horiz  = FALSE,
                    box.col="NA")
 
             dev.off()
@@ -895,13 +913,13 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
         }
       }
       else{
-        cat("het_pos is ",het_pos," enter het_pos > 80 process, rescaling... \n")
+        message("het_pos is ",het_pos," enter het_pos > 80 process, rescaling... \n")
         if (het_pos >= 80) {
           scaled_factor <- round(het_pos / 60, digits=1)
         }
         scale_flag = TRUE
         #scaled_factor <- round(het_pos / 50)
-        cat("scaled_factor is ",scaled_factor,"\n")
+        message("scaled_factor is ",scaled_factor,"\n")
         histo_raw <- read.table(paste(path, sample, sep="") ) # from jellyfish
         if((het_pos - start_pos) < 8){
           histo_org <- histo_raw
@@ -928,7 +946,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
         # histo_data_scaled_sel <- histo_data_scaled[histo_data_scaled[,1] %% 1 == 0,]
         # colnames(histo_data_scaled_sel) <- c("V1","V2")
-        write.table(file=paste0(path,sample,"_scaled"), x=result_scaled, quote=F, row.names=F, col.names=F)
+        write.table(file=paste0(path,sample,"_scaled"), x=result_scaled, quote=FALSE, row.names=FALSE, col.names=FALSE)
         sample <- paste0(sample,"_scaled")
 
         ## add main code
@@ -940,7 +958,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
           if(ploidy_ind == 1){
             exp_hom_temp = exp_hom
             avg_cov = 0
-            cat('ploidy index : ',ploidy_ind)
+            message('ploidy index : ',ploidy_ind)
             histo_raw <- read.table(paste(path, sample, sep="") ) # from jellyfish
             for(left_fit_ratio in left_fit_ratio_list){
               fit_para_save_list = findGSE_sp(histo = paste(path, sample, sep = ""), sizek = sizek , outdir = paste(path, output_dir, sep = ""), exp_hom = exp_hom_temp,ploidy_ind=ploidy_ind, avg_cov=avg_cov,left_fit_ratio=left_fit_ratio, meanfit_old=meanfit_old, sdfit_old = sdfit_old, scale_flag = scale_flag)
@@ -952,7 +970,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
               meanfit_old= fit_para_save_list[[4]]
               sdfit_old = fit_para_save_list[[5]]
               histo_het <- read.table(paste(path, output_dir, "v1.94.est.",sample,".genome.size.estimated.k",sizek, "to", sizek, ".fitted_hetfit_count.txt", sep="") ) # from prepare_findGSE.R
-              cat("rescaling procedure start...\n")
+              message("rescaling procedure start...\n")
               histo_raw_rescale_raw <- histo_data
               #browser()
               # histo_het_rescale_tmp <- as.data.frame(cbind(histo_het$V1*scaled_factor,histo_het$V2/scaled_factor))
@@ -999,7 +1017,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
               ## write rescale histo file
               histo_het_rescale <- result_rescaled
 
-              write.table(histo_het_rescale, file = paste0(path, output_dir,sample,"_",ploidy_ind,"_rescale.histo"), sep = ' ', col.names = F, row.names = F, quote = F)
+              write.table(histo_het_rescale, file = paste0(path, output_dir,sample,"_",ploidy_ind,"_rescale.histo"), sep = ' ', col.names = FALSE, row.names = FALSE, quote = FALSE)
 
 
 
@@ -1007,14 +1025,14 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
               happeak_index_rescale <- histo_het_rescale[happeak_index_rescale,1]
               range_avg_cov_rescale <- (happeak_index_rescale-range_left):(happeak_index_rescale+range_right)
               avg_cov_rescale       <- round(sum(histo_raw_rescale_raw[range_avg_cov_rescale, 1] * histo_raw_rescale_raw[range_avg_cov_rescale, 2] / sum(histo_raw_rescale_raw[range_avg_cov_rescale, 2])), digits = 2)
-              cat("rescaling procedure end...\n")
+              message("rescaling procedure end...\n")
 
               final_fit_peak_pos_ind <- which.max(histo_het_rescale$V2)
               final_fit_peak_pos <-  histo_het_rescale[final_fit_peak_pos_ind,1]
               distance_fit_two_line <- abs(avg_cov_rescale*ploidy_ind - final_fit_peak_pos)
-              cat('difference of cyan peaks: ',final_fit_peak_pos,', gray peak: ',avg_cov_rescale*ploidy_ind,'\n')
+              message('difference of cyan peaks: ',final_fit_peak_pos,', gray peak: ',avg_cov_rescale*ploidy_ind,'\n')
               if(distance_fit_two_line <= 5){
-                cat(left_fit_ratio,' meet the requirement, continue...\n')
+                message(left_fit_ratio,' meet the requirement, continue...\n')
                 break
               }
 
@@ -1035,8 +1053,8 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
             # find the haplotype average kmer coverage.
             happeak_index <- which.max(histo_het$V2) # coverage at het-peak 14, x, ...
             happeak_index <- histo_het[happeak_index,1]
-            cat("hap peak at", happeak_index, '\n')
-            #cat("left peak at", range_left, '\n')
+            message("hap peak at", happeak_index, '\n')
+            #message("left peak at", range_left, '\n')
             if(happeak_index <= range_left){
               range_avg_cov <- 1:(happeak_index+range_right)
             }
@@ -1044,11 +1062,11 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
               range_avg_cov <- (happeak_index-range_left):(happeak_index+range_right)
             }
 
-            cat('happeak_index is: ',happeak_index,' range_left is ',range_left,'\n')
+            message('happeak_index is: ',happeak_index,' range_left is ',range_left,'\n')
             avg_cov       <- round(sum(histo_raw[range_avg_cov, 1] * histo_raw[range_avg_cov, 2] / sum(histo_raw[range_avg_cov, 2])), digits = 2)
 
             # find the valley on the left of het region
-            # cat('start estimate haploid portion333...: ',happeak_index_rescale,'eee ',length(histo_raw_rescale_raw[1:happeak_index_rescale, 2]),'\n')
+            # message('start estimate haploid portion333...: ',happeak_index_rescale,'eee ',length(histo_raw_rescale_raw[1:happeak_index_rescale, 2]),'\n')
             valley_index  <- which.min(histo_raw_rescale_raw[1:happeak_index_rescale, 2])
 
 
@@ -1061,13 +1079,13 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
             valley_index_k <- which.min(abs(histo_het_rescale[,1] - valley_index))
 
 
-            cat('valley_index is: ',valley_index, ', and valley_index_k is ',valley_index_k,'\n')
+            message('valley_index is: ',valley_index, ', and valley_index_k is ',valley_index_k,'\n')
             # Calculate the difference
             diff_index <- valley_index - valley_index_k
 
             # Construct the new vector to assign to histo_fit
             new_values <- c(rep(0, diff_index), histo_het_rescale[1:valley_index_k, 2])
-            cat('histo_fit the first ',valley_index,' value is: ',new_values,'\n')
+            message('histo_fit the first ',valley_index,' value is: ',new_values,'\n')
             # Assign to histo_fit
             histo_fit[1:valley_index, 2] <- new_values
 
@@ -1093,7 +1111,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                  col ="gray",
                  lwd=1,
                  cex=1.5,
-                 frame.plot = F)
+                 frame.plot = FALSE)
             # final used for gse
             lines(histo_fit$V1,  histo_fit$V2, col=alpha("orangered", 0.8), lwd=6)
 
@@ -1146,13 +1164,13 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
             target_end_index <- round(hom_peak_pos_save) * 2 - round(het_peak_pos_save)
             if(ploidy_ind > 2){
               max_het_ind <- which(histo_tmp[,2] == max(histo_tmp[round(hom_peak_pos_save):length(histo_tmp$V1),2]))
-              cat('max_het_ind is : ',max_het_ind,'\n')
+              message('max_het_ind is : ',max_het_ind,'\n')
               if (max_het_ind && round(hom_peak_pos_save) < max_het_ind && (max_het_ind - round(hom_peak_pos_save)) > 3 ){
-                cat('match latter peak pattern, reverse data in ... ploidy ',ploidy_ind,'\n')
+                message('match latter peak pattern, reverse data in ... ploidy ',ploidy_ind,'\n')
                 histo_tmp_raw <- histo_tmp
                 histo_tmp_raw[target_start_index:length(histo_tmp$V1),2] <- 1
                 histo_tmp_raw[target_start_index:target_end_index, 2] <- rev(histo_tmp_raw[round(het_peak_pos_save):round(hom_peak_pos_save), 2])
-                write.table(histo_tmp_raw, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = F, row.names = F, quote = F)
+                write.table(histo_tmp_raw, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = FALSE, row.names = FALSE, quote = FALSE)
                 #lines(histo_tmp_raw$V1,  histo_tmp_raw$V2, col="black", lwd=3)
                 continue_reverse_flag = TRUE
               }
@@ -1163,8 +1181,8 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                   histo_tmp_raw[target_start_index:length(histo_tmp$V1),2] <- 1
                   histo_tmp_raw[target_start_index:target_end_index, 2] <- rev(histo_tmp_raw[round(het_peak_pos_save):round(hom_peak_pos_save), 2])
 
-                  #cat('pppploidy_ind range: ',which(histo_tmp$V1 == round(avg_cov * (ploidy_ind+0.7))),'\n')
-                  write.table(histo_tmp_raw, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = F, row.names = F, quote = F)
+                  #message('pppploidy_ind range: ',which(histo_tmp$V1 == round(avg_cov * (ploidy_ind+0.7))),'\n')
+                  write.table(histo_tmp_raw, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = FALSE, row.names = FALSE, quote = FALSE)
 
                 }
                 else{
@@ -1173,8 +1191,8 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                   #histo_tmp_raw[target_start_index:length(histo_tmp$V1),2] <- 1
                   #histo_tmp_raw[target_start_index:target_end_index, 2] <- rev(histo_tmp_raw[round(het_peak_pos_save):round(hom_peak_pos_save), 2])
 
-                  #cat('pppploidy_ind range: ',which(histo_tmp$V1 == round(avg_cov * (ploidy_ind+0.7))),'\n')
-                  write.table(histo_tmp_raw, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = F, row.names = F, quote = F)
+                  #message('pppploidy_ind range: ',which(histo_tmp$V1 == round(avg_cov * (ploidy_ind+0.7))),'\n')
+                  write.table(histo_tmp_raw, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = FALSE, row.names = FALSE, quote = FALSE)
                   #lines(histo_tmp_raw$V1,  histo_tmp_raw$V2, col="black", lwd=3)
                 }
 
@@ -1182,17 +1200,17 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
             }
             else{
-              write.table(histo_tmp, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = F, row.names = F, quote = F)
+              write.table(histo_tmp, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = FALSE, row.names = FALSE, quote = FALSE)
             }
             ## end add reverse data part
 
-            # write.table(histo_tmp, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = F, row.names = F, quote = F)
+            # write.table(histo_tmp, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = F, row.names = F, quote = FALSE)
 
             exp_hom_temp = avg_cov * (ploidy_ind+1) + avg_cov * 0.1
             histo_raw <- histo_tmp
-            cat('exp_hom_temp: ',exp_hom_temp,' \n')
+            message('exp_hom_temp: ',exp_hom_temp,' \n')
             for(left_fit_ratio in left_fit_ratio_list){
-              cat('Now is fitting left fit ratio: ',left_fit_ratio,'\n')
+              message('Now is fitting left fit ratio: ',left_fit_ratio,'\n')
               fit_para_save_list = findGSE_sp(histo = paste(path, sample,"_",ploidy_ind, sep = ""), sizek = sizek , outdir = paste(path, output_dir, sep = ""), exp_hom = exp_hom_temp,ploidy_ind=ploidy_ind,avg_cov=avg_cov,left_fit_ratio=left_fit_ratio, meanfit_old=meanfit_old, sdfit_old = sdfit_old, scale_flag = scale_flag)
               het_xfit_right_save <- fit_para_save_list[[1]]
               hom_peak_pos_save <- fit_para_save_list[[2]]
@@ -1200,7 +1218,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
               histo_het <- read.table(paste(path, output_dir, "v1.94.est.",sample,"_",ploidy_ind,".genome.size.estimated.k",sizek, "to", sizek, ".fitted_hetfit_count.txt", sep="") ) # from prepare_findGSE.R
               # het fitting rescale
               #lines(histo_het$V1,  histo_het$V2, col="deepskyblue", lwd=3, lty=2)
-              cat('Now scale factor is : ',scaled_factor,'\n')
+              message('Now scale factor is : ',scaled_factor,'\n')
               # histo_het_rescale_tmp <- as.data.frame(cbind(histo_het$V1*scaled_factor,histo_het$V2/scaled_factor))
               # histo_het_rescale <- histo_het_rescale_tmp[histo_het_rescale_tmp[,1] %% 1 == 0,]
               # colnames(histo_het_rescale) <- c("V1","V2")
@@ -1235,12 +1253,12 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
               histo_het_rescale <- result_rescaled
               ## write rescale histo_het_rescale
-              write.table(histo_het_rescale, file = paste0(path, output_dir,sample,"_",ploidy_ind,"_rescale.histo"), sep = ' ', col.names = F, row.names = F, quote = F)
+              write.table(histo_het_rescale, file = paste0(path, output_dir,sample,"_",ploidy_ind,"_rescale.histo"), sep = ' ', col.names = FALSE, row.names = FALSE, quote = FALSE)
               all_slope_data <- abs(diff(diff(histo_het$V2))[(round(avg_cov)*ploidy_ind-10):(round(avg_cov)*ploidy_ind+10)])
               if(!all(all_slope_data > 100)){
                 #lines(histo_het_rescale$V1,  histo_het_rescale$V2, col="deepskyblue", lwd=3, lty=2)
 
-                cat('index is :',ploidy_ind,' slope is ',all_slope_data)
+                message('index is :',ploidy_ind,' slope is ',all_slope_data)
                 success_file <- FALSE
                 stoped_ploidy_ind = ploidy_ind - 1
                 break
@@ -1249,17 +1267,17 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
               final_fit_peak_pos <-  histo_het_rescale[final_fit_peak_pos_ind,1]
               distance_fit_two_line <- abs(avg_cov_rescale*ploidy_ind - final_fit_peak_pos)
-              cat('difference of cyan peaks: ',final_fit_peak_pos,', gray peak: ',avg_cov_rescale*ploidy_ind,'\n')
+              message('difference of cyan peaks: ',final_fit_peak_pos,', gray peak: ',avg_cov_rescale*ploidy_ind,'\n')
               if(distance_fit_two_line <= 5){
-                cat(left_fit_ratio,' meet the requirement, continue...\n')
+                message(left_fit_ratio,' meet the requirement, continue...\n')
                 break
               }
-              cat('Do Not meet requirement, try another parameter...\n')
+              message('Do Not meet requirement, try another parameter...\n')
             }
 
             if(!success_file){
 
-              cat('Right now ploidy equal to ploidy_ind\n')
+              message('Right now ploidy equal to ploidy_ind\n')
 
               abline(v = avg_cov_rescale*stoped_ploidy_ind, lty=3, col="gray")
 
@@ -1275,7 +1293,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                                 paste("Haploid GSE (avg.): ", round(genome_size, digits = 2), " Mb", sep="")
                      ),
                      cex    = 0.8,
-                     horiz  = F,
+                     horiz  = FALSE,
                      box.col="NA")
 
               dev.off()
@@ -1312,7 +1330,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                               paste("Haploid GSE (avg.): ", round(genome_size, digits = 2), " Mb", sep="")
                    ),
                    cex    = 0.8,
-                   horiz  = F,
+                   horiz  = FALSE,
                    box.col="NA")
             dev.off()
           }
@@ -1336,13 +1354,13 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
           if(ploidy_ind == 1){
 
             avg_cov = 0
-            cat('ploidy index : ',ploidy_ind)
+            message('ploidy index : ',ploidy_ind)
             #grDevices::png(paste("apple_hap_genome_size_est.jpg", sep=""),  height=400, width=708)
             ####
             histo_raw <- read.table(paste(path, sub("_scaled$", "", sample), sep="") ) # from jellyfish
             histo_het <- read.table(paste(path, output_dir, "v1.94.est.",sample,".genome.size.estimated.k",sizek, "to", sizek, ".fitted_hetfit_count.txt", sep="") ) # from prepare_findGSE.R
             ## re-scale back
-            cat("rescaling procedure start...\n")
+            message("rescaling procedure start...\n")
             # histo_raw_rescale_raw <- histo_data
             # #browser()
             # histo_het_rescale_tmp <- as.data.frame(cbind(histo_het$V1*scaled_factor,histo_het$V2/scaled_factor))
@@ -1384,7 +1402,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
             happeak_index_rescale <- which.max(histo_het_rescale$V2) # coverage at het-peak 14, x, ...
             range_avg_cov_rescale <- (happeak_index_rescale-range_left):(happeak_index_rescale+range_right)
             #avg_cov_rescale       <- round(sum(histo_raw_rescale_raw[range_avg_cov_rescale, 1] * histo_raw_rescale_raw[range_avg_cov_rescale, 2] / sum(histo_raw_rescale_raw[range_avg_cov_rescale, 2])), digits = 2)
-            cat("rescaling procedure end...\n")
+            message("rescaling procedure end...\n")
 
             ## end re-scale back
 
@@ -1393,15 +1411,15 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
             # find the haplotype average kmer coverage.
             happeak_index <- which.max(histo_het$V2) # coverage at het-peak 14, x, ...
-            #cat("hap peak at", happeak_index, '\n')
-            #cat("left peak at", range_left, '\n')
+            #message("hap peak at", happeak_index, '\n')
+            #message("left peak at", range_left, '\n')
             range_avg_cov <- (happeak_index-range_left):(happeak_index+range_right)
             avg_cov       <- round(sum(histo_raw[range_avg_cov, 1] * histo_raw[range_avg_cov, 2] / sum(histo_raw[range_avg_cov, 2])), digits = 2)
 
             # find the valley on the left of het region
             valley_index  <- which.min(histo_raw_rescale_raw[1:happeak_index_rescale, 2])
 
-            #cat(valley_index, '\n')
+            #message(valley_index, '\n')
             #
 
 
@@ -1476,7 +1494,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                               paste("Haploid GSE (avg.): ", round(genome_size, digits = 2), " Mb", sep="")
                    ),
                    cex    = 0.6,
-                   horiz  = F,
+                   horiz  = FALSE,
                    box.col="NA")
             dev.off()
           }
@@ -1504,13 +1522,13 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
     #       len       <- length(histo_raw$V1)
     #       # find the haplotype average kmer coverage.
     #       happeak_index <- which.max(histo_het$V2) # coverage at het-peak 14, x, ...
-    #       #cat("hap peak at", happeak_index, '\n')
-    #       #cat("left peak at", range_left, '\n')
+    #       #message("hap peak at", happeak_index, '\n')
+    #       #message("left peak at", range_left, '\n')
     #       range_avg_cov <- (happeak_index-range_left):(happeak_index+range_right)
     #       avg_cov       <- round(sum(histo_raw[range_avg_cov, 1] * histo_raw[range_avg_cov, 2] / sum(histo_raw[range_avg_cov, 2])), digits = 2)
     #       # find the valley on the left of het region
     #       valley_index  <- which.min(histo_raw[1:happeak_index, 2])
-    #       #cat(valley_index, '\n')
+    #       #message(valley_index, '\n')
     #       #
     #       # make new histogram with fittings at het-kmers
     #       histo_fit                    <- histo_raw
@@ -1526,7 +1544,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
     #           col ="gray",
     #           lwd=1,
     #           cex=1.5,
-    #           frame.plot = F)
+    #           frame.plot = FALSE)
     #       # final used for gse
     #       lines(histo_fit$V1,  histo_fit$V2, col=alpha("orangered", 0.8), lwd=6)
     #       # het fitting
@@ -1561,7 +1579,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
     #       het_length = dim(histo_het)[1]
     #       histo_tmp[1:het_length,2] = abs(histo_tmp[1:het_length,2] - histo_het[,2])
     # #histo_tmp[1:(ploidy_ind/(ploidy_ind+1)*avg_cov*ploidy_ind)*0.6,2] = 0
-    #       write.table(histo_tmp, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = F, row.names = F, quote = F)
+    #       write.table(histo_tmp, file = paste0(path, sample,"_",ploidy_ind), sep = ' ', col.names = F, row.names = F, quote = FALSE)
 
     #       exp_hom_temp = avg_cov * (ploidy_ind+1) + 50
     #       findGSE_sp(histo = paste(path, sample,"_",ploidy_ind, sep = ""), sizek = sizek , outdir = paste(path, output_dir, sep = ""), exp_hom = exp_hom_temp,ploidy_ind=ploidy_ind,avg_cov=avg_cov)
