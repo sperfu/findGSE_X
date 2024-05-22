@@ -6,7 +6,6 @@ importFrom("grDevices", "dev.off", "grey", "pdf", "png", "rainbow")
   importFrom("stats", "approx", "dnorm", "na.omit", "optim", "sd")
   importFrom("utils", "read.table", "write.csv", "write.table")
 
-
 importFrom("ggplot2", "ggplot", "geom_point", "geom_line", "labs",
            "theme", "theme_classic", "geom_histogram", "geom_density",
            "facet_wrap", "scale_fill_brewer", "scale_color_brewer",

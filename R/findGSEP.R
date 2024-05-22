@@ -63,7 +63,7 @@ library(scales)
 library(dplyr)
 # library(RColorBrewer)
 library(ggplot2)
-
+library(grDevices)
 
 ################################################## main #############################################################
 #' @title Estimate genome size of polyploid species using k-mer frequencies.
@@ -723,14 +723,19 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                 genome_size     = sum(histo_fit$V1 * (histo_fit$V2 / 1000000)) / (ploidy*avg_cov) # tetraploid size: 3374.929 Mb, haploid size: 843.7321
                 message('ploidy for plot is ',stoped_ploidy_ind,'\n')
               }
-
+              # Construct the legend text for portion sizes
+              portion_legend <- c(
+                paste("Portion-copy ", 1:stoped_ploidy_ind, ": ", round(portion_size[1:stoped_ploidy_ind], digits = 2), " Mb", sep = ""),
+                paste("Portion-copy > ", stoped_ploidy_ind, ": ", round(portion_size[stoped_ploidy_ind + 1], digits = 2), " Mb", sep = "")
+              )
               legend("topright",
                      pch    = rep(15, 3),
                      col    = c("gray", "gray", "gray","cyan", brewer_palette[2:stoped_ploidy_ind],"gray", alpha("orangered", 0.8)),
                      legend = c(paste("Raw", sep=""),
                                 paste("Haploid-peak: ", avg_cov, sep=""),
                                 paste("Haploid-fitting:", sep=""),
-                                paste("Portion-copy",1:(stoped_ploidy_ind+1),": ",paste(round(portion_size, digits = 2), sep=","), " Mb", sep=""),
+                                portion_legend,
+                                #paste("Portion-copy",1:(stoped_ploidy_ind+1),": ",paste(round(portion_size, digits = 2), sep=","), " Mb", sep=""),
                                 paste("Haploid GSE (avg.): ", round(genome_size, digits = 2), " Mb", sep="")
                      ),
                      cex    = 0.8,
@@ -774,19 +779,25 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
               genome_size     = sum(histo_fit$V1 * (histo_fit$V2 / 1000000)) / (ploidy*avg_cov) # tetraploid size: 3374.929 Mb, haploid size: 843.7321
               message('ploidy for plot is ',final_ploidy,'\n')
             }
+            # Construct the legend text for portion sizes
+            portion_legend <- c(
+              paste("Portion-copy ", 1:ploidy, ": ", round(portion_size[1:ploidy], digits = 2), " Mb", sep = ""),
+              paste("Portion-copy > ", ploidy, ": ", round(portion_size[ploidy + 1], digits = 2), " Mb", sep = "")
+            )
             legend("topright",
                    pch    = rep(15, 3),
                    col    = c("gray", "gray", "gray","cyan", brewer_palette[2:ploidy_ind],"gray", alpha("orangered", 0.8)),
                    legend = c(paste("Raw", sep=""),
                               paste("Haploid-peak: ", avg_cov, sep=""),
                               paste("Haploid-fitting:", sep=""),
-                              paste("Portion-copy",1:(ploidy+1),": ",paste(round(portion_size, digits = 2), sep=","), " Mb", sep=""),
+                              portion_legend,
+                              #paste("Portion-copy",1:(ploidy+1),": ",paste(round(portion_size, digits = 2), sep=","), " Mb", sep=""),
                               paste("Haploid GSE (avg.): ", round(genome_size, digits = 2), " Mb", sep="")
                    ),
                    cex    = 0.8,
                    horiz  = FALSE,
                    box.col="NA")
-
+            #message('ooopppsss.\n')
             dev.off()
           }
         }
@@ -895,13 +906,15 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                     col = alpha(brewer_palette[ploidy_ind], 0.3), border = NA)
           }
           if(ploidy_ind == ploidy){
+
             legend("topright",
                    pch    = rep(15, 3),
                    col    = c("gray", "gray", "gray","cyan", brewer_palette[2:ploidy_ind],"gray", alpha("orangered", 0.8)),
                    legend = c(paste("Raw", sep=""),
                               paste("Haploid-peak: ", avg_cov, sep=""),
                               paste("Haploid-fitting:", sep=""),
-                              paste("Portion-copy",1:(ploidy_ind+1),": ",paste(round(portion_size, digits = 2), sep=","), " Mb", sep=""),
+                              portion_legend,
+                              #paste("Portion-copy",1:(ploidy_ind+1),": ",paste(round(portion_size, digits = 2), sep=","), " Mb", sep=""),
                               paste("Haploid GSE (avg.): ", round(genome_size, digits = 2), " Mb", sep="")
                    ),
                    cex    = 0.6,
@@ -1283,13 +1296,18 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
               rep_size <- genome_size - sum(portion_size)
               portion_size <- c(portion_size,rep_size)
+              portion_legend <- c(
+                paste("Portion-copy ", 1:stoped_ploidy_ind, ": ", round(portion_size[1:stoped_ploidy_ind], digits = 2), " Mb", sep = ""),
+                paste("Portion-copy > ", stoped_ploidy_ind, ": ", round(portion_size[stoped_ploidy_ind + 1], digits = 2), " Mb", sep = "")
+              )
               legend("topright",
                      pch    = rep(15, 3),
                      col    = c("gray", "gray", "gray","cyan", brewer_palette[2:stoped_ploidy_ind],"gray", alpha("orangered", 0.8)),
                      legend = c(paste("Raw", sep=""),
                                 paste("Haploid-peak: ", avg_cov_rescale, sep=""),
                                 paste("Haploid-fitting:", sep=""),
-                                paste("Portion-copy",1:(stoped_ploidy_ind+1),": ",paste(round(portion_size, digits = 2), sep=","), " Mb", sep=""),
+                                portion_legend,
+                                #paste("Portion-copy",1:(stoped_ploidy_ind+1),": ",paste(round(portion_size, digits = 2), sep=","), " Mb", sep=""),
                                 paste("Haploid GSE (avg.): ", round(genome_size, digits = 2), " Mb", sep="")
                      ),
                      cex    = 0.8,
@@ -1320,13 +1338,18 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
             #rep_size <- sum(histo_fit[rep_start_ind:length(histo_fit$V1),1] * histo_fit[rep_start_ind:length(histo_fit$V1),2] / 1000000) / (ploidy*avg_cov_rescale)
             rep_size <- genome_size - sum(portion_size)
             portion_size <- c(portion_size,rep_size)
+            portion_legend <- c(
+              paste("Portion-copy ", 1:ploidy, ": ", round(portion_size[1:ploidy], digits = 2), " Mb", sep = ""),
+              paste("Portion-copy > ", ploidy, ": ", round(portion_size[ploidy + 1], digits = 2), " Mb", sep = "")
+            )
             legend("topright",
                    pch    = rep(15, 3),
                    col    = c("gray", "gray", "gray","cyan", brewer_palette[2:ploidy_ind],"gray", alpha("orangered", 0.8)),
                    legend = c(paste("Raw", sep=""),
                               paste("Haploid-peak: ", avg_cov_rescale, sep=""),
                               paste("Haploid-fitting", sep=""),
-                              paste("Portion-copy",1:(ploidy_ind+1),": ",paste(round(portion_size, digits = 2), sep=","), " Mb", sep=""),
+                              portion_legend,
+                              #paste("Portion-copy",1:(ploidy_ind+1),": ",paste(round(portion_size, digits = 2), sep=","), " Mb", sep=""),
                               paste("Haploid GSE (avg.): ", round(genome_size, digits = 2), " Mb", sep="")
                    ),
                    cex    = 0.8,
@@ -1490,6 +1513,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
                    legend = c(paste("Raw", sep=""),
                               paste("Haploid-peak: ", avg_cov_rescale, sep=""),
                               paste("Haploid-fitting", sep=""),
+                              portion_legend,
                               paste("Portion-copy",1:(ploidy_ind+1),": ",paste(round(portion_size, digits = 2), sep=","), " Mb", sep=""),
                               paste("Haploid GSE (avg.): ", round(genome_size, digits = 2), " Mb", sep="")
                    ),

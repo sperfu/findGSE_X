@@ -10,11 +10,11 @@ Description: Provides tools to estimate the genome size of polyploid species usi
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-Depends: R(>= 4.2.0),RColorBrewer,ggplot2
+Depends: R(>= 4.2.0),RColorBrewer,ggplot2,grDevices
 Imports:
     pracma,
     scales,
-    dplyr
+    dplyr,
 RoxygenNote: 7.3.1
 URL: https://github.com/sperfu/findGSEP
 BugReports: https://github.com/sperfu/findGSEP/issues
