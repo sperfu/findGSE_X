@@ -78,6 +78,10 @@ install.packages("devtools")
 ```bash
 devtools::install_github("sperfu/findGSEP")
 ```
+
+### Note: This package was developed using R version 4.2.0. To ensure the stability of the package, it is highly recommended that users install R version 4.2.0.
+
+
 ### Data
 
 You can check our demo dataset at our [webserver](http://146.56.237.198:3838/findGSEP/) or [drive](https://drive.google.com/drive/folders/1fBuPRxi_J-oMpj6G2KokEUeB_8S8ahH6?usp=share_link) for complete data. We have provide precalculated histo file whose ploidy number ranging from tetraploid to octoploid.
