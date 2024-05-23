@@ -21,3 +21,12 @@ A numeric value representing the minimized difference.
 \description{
 This function tunes the final fitting for raw heterozygous genomes by adjusting the delta values for heterozygous and homozygous regions.
 }
+\examples{
+tooptimize <- c(0.5)
+h_het <- rnorm(100)
+h_hom <- rnorm(100)
+h_target <- rnorm(100)
+diff <- error_minimize2_raw(tooptimize, h_het, h_hom, h_target)
+print(diff)
+
+}

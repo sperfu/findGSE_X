@@ -12,6 +12,19 @@
 #' @param min_valid_pos An integer indicating the left-side position from which the observed k-mer frequencies will be fitted.
 #' @param itr An integer representing the iteration count.
 #' @return A numeric value representing the minimized error.
+#' @examples
+#' tooptimize <- c(1, 1, 1, 1)
+#' x <- rnorm(100)
+#' end <- 100
+#' xfit <- seq(min(x), max(x), length=end)
+#' xfit_left <- min(x)
+#' xfit_right <- max(x)
+#' d <- data.frame(V1=1:100, V2=rnorm(100))
+#' min_valid_pos <- 10
+#' itr <- 100
+#' error <- error_minimize_raw(tooptimize, x, end, xfit, xfit_left, xfit_right, d, min_valid_pos, itr)
+#' print(error)
+#'
 #' @export
 error_minimize_raw<-function(tooptimize, x, end, xfit, xfit_left, xfit_right, d, min_valid_pos, itr)
 {
@@ -49,6 +62,14 @@ error_minimize_raw<-function(tooptimize, x, end, xfit, xfit_left, xfit_right, d,
 #' @param h_hom A numeric vector representing the raw fitting for the homozygous region.
 #' @param h_target A numeric vector representing the target k-mer frequency.
 #' @return A numeric value representing the minimized difference.
+#' @examples
+#' tooptimize <- c(0.5)
+#' h_het <- rnorm(100)
+#' h_hom <- rnorm(100)
+#' h_target <- rnorm(100)
+#' diff <- error_minimize2_raw(tooptimize, h_het, h_hom, h_target)
+#' print(diff)
+#'
 #' @export
 error_minimize2_raw<-function(tooptimize, h_het, h_hom, h_target)
 {
@@ -76,6 +97,21 @@ error_minimize2_raw<-function(tooptimize, h_het, h_hom, h_target)
 #' @param min_valid_pos An integer indicating the left-side position from which the observed k-mer frequencies will be fitted.
 #' @param itr An integer representing the iteration count.
 #' @return A numeric value representing the minimized error.
+#' @examples
+#' tooptimize <- c(1, 1, 1, 1)
+#' x <- rnorm(100)
+#' end <- 100
+#' xfit <- seq(min(x), max(x), length=end)
+#' xfit_left <- min(x) + 1
+#' xfit_right <- max(x) - 1
+#' d <- data.frame(V1=1:100, V2=rnorm(100))
+#' min_valid_pos <- 10
+#' itr <- 100
+#'
+#' error <- error_minimize3_raw(tooptimize, x, end, xfit_left, xfit_right, d,
+#' min_valid_pos, itr)
+#' print(error)
+#'
 #' @export
 error_minimize3_raw<-function(tooptimize, x, end, xfit_left, xfit_right, d, min_valid_pos, itr)
 {
@@ -104,6 +140,10 @@ error_minimize3_raw<-function(tooptimize, x, end, xfit_left, xfit_right, d, min_
 #'
 #' @param d0 A data frame representing the initial raw k-mer count from software like Jellyfish.
 #' @return A data frame with recovered raw k-mer counts.
+#' @examples
+#' d0 <- data.frame(V1 = c(1, 2, 4), V2 = c(100, 200, 300))
+#' dr <- initial_count_recover_raw(d0)
+#'
 #' @export
 initial_count_recover_raw <- function(d0)
 {
@@ -127,6 +167,10 @@ initial_count_recover_raw <- function(d0)
 #' @param left_right An integer indicating whether to modify the left part (0) or the right part (1).
 #' @param histx A data frame representing the raw k-mer histogram.
 #' @return A modified data frame with adjusted raw k-mer frequencies.
+#' @examples
+#' histx <- data.frame(V1 = 1:10, V2 = c(100, 200, 300, 400, 500, 400, 300, 200, 100, 50))
+#' histx_new <- kmer_count_modify_raw(3, 7, 0, histx)
+#'
 #' @export
 kmer_count_modify_raw <- function(start, end, left_right, histx)
 {
@@ -158,6 +202,16 @@ kmer_count_modify_raw <- function(start, end, left_right, histx)
 #' @param exp_hom A numeric value representing the expected average k-mer coverage for the homozygous regions.
 #' @param species A character string specifying the species name.
 #' @return A list containing the estimated genome size and other fitting parameters.
+#' @examples
+#' \donttest{
+#'
+#' histo <- "sample1.histo"
+#' sizek <- 21
+#' outdir <- ""
+#' exp_hom <- 200
+#' species <- ""
+#' fit_lists <- findGSE_raw(histo, sizek,output_dir, exp_hom, species)
+#' }
 #' @export
 findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
 {
@@ -1259,6 +1313,12 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
 #' @param peaks A data frame containing the peaks from the histogram.
 #' @param histo A data frame representing the raw k-mer histogram.
 #' @return A data frame with filtered peaks.
+#' @examples
+#' peaks <- data.frame(V1=1:20, V2=sample(1:10, 20, replace=TRUE))
+#' histo <- data.frame(V1=1:100, V2=sample(1:10, 100, replace=TRUE))
+#' filtered_peaks <- filter_peaks_raw(peaks, histo)
+#' print(filtered_peaks)
+#'
 #' @export
 filter_peaks_raw <- function(peaks, histo)
 {

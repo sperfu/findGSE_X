@@ -107,17 +107,18 @@ library(grDevices)
 #' @return No return value, called for side effects. The function generates PDF, PNG, and CSV files in the specified output directory.
 #'
 #' @examples
-#' \dontrun{
-#' path <- "path/to/kmer/files"
-#' samples <- "sample1.histo"
+#' \donttest{
+#' test_histo <- system.file("extdata","example.histo",package = "findGSEP")
+#' path <- dirname(test_histo)
+#' samples <- basename(test_histo)
 #' sizek <- 21
 #' exp_hom <- 200
-#' ploidy <- 4
+#' ploidy <- 3
 #' range_left <- exp_hom*0.2
 #' range_right <- exp_hom*0.2
 #' xlimit <- -1
 #' ylimit <- -1
-#' output_dir <- "results"
+#' output_dir <- ""
 #'
 #' findGSEP(path, samples, sizek, exp_hom, ploidy, range_left, range_right, xlimit, ylimit, output_dir)
 #' }
@@ -339,7 +340,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
       end_time <- initialize_start_time()
       execution_time <- end_time - start_time
-      print(paste("Program running time:", sum(execution_time)))
+      message(paste("Program running time:", sum(execution_time)))
       ## draw grDevices::png file
       grDevices::png(paste(path, output_dir ,sample,"_hap_genome_size_est.png", sep=""),  width = 1200, height = 800, res = 200)
       par(family = "Helvetica")
@@ -808,7 +809,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
         end_time <- initialize_start_time()
         execution_time <- end_time - start_time
-        print(paste("Program running time:", sum(execution_time)))
+        message(paste("Program running time:", sum(execution_time)))
         # grDevices::png file
 
         grDevices::png(paste(path, output_dir ,sample,"_hap_genome_size_est.png", sep=""),  width = 1200, height = 800, res = 200)
@@ -1363,7 +1364,7 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
 
         end_time <- initialize_start_time()
         execution_time <- end_time - start_time
-        print(paste("Program running time:", sum(execution_time)))
+        message(paste("Program running time:", sum(execution_time)))
         ## grDevices::png file draw
 
 

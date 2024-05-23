@@ -68,17 +68,18 @@ Parameters k and related histo file are required for any estimation.
 Dependencies (R library) required: pracma, fGarch, etc. - see DESCRIPTION for details.
 }
 \examples{
-\dontrun{
-path <- "path/to/kmer/files"
-samples <- "sample1.histo"
+\donttest{
+test_histo <- system.file("extdata","example.histo",package = "findGSEP")
+path <- dirname(test_histo)
+samples <- basename(test_histo)
 sizek <- 21
 exp_hom <- 200
-ploidy <- 4
+ploidy <- 3
 range_left <- exp_hom*0.2
 range_right <- exp_hom*0.2
 xlimit <- -1
 ylimit <- -1
-output_dir <- "results"
+output_dir <- ""
 
 findGSEP(path, samples, sizek, exp_hom, ploidy, range_left, range_right, xlimit, ylimit, output_dir)
 }

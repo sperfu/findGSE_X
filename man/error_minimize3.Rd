@@ -45,7 +45,7 @@ A numeric value representing the minimized error.
 This function minimizes the error for the remaining k-mer frequency by adjusting the scaling factor.
 }
 \examples{
-\dontrun{
+
 tooptimize <- c(1, 1, 1, 1)
 x <- rnorm(100)
 end <- 100
@@ -57,8 +57,8 @@ min_valid_pos <- 10
 itr <- 100
 meanfit <- 18
 sdfit <- 4.21
-error <- error_minimize3(tooptimize, x, end, xfit, xfit_left, xfit_right, d,
+error <- error_minimize3(tooptimize, x, end, xfit_left, xfit_right, d,
 min_valid_pos, itr, meanfit, sdfit)
 print(error)
-}
+
 }

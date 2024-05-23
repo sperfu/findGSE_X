@@ -17,3 +17,10 @@ A data frame with filtered peaks.
 \description{
 This function filters peaks from a raw k-mer histogram to find a major peak with enough support information on both sides.
 }
+\examples{
+peaks <- data.frame(V1=1:20, V2=sample(1:10, 20, replace=TRUE))
+histo <- data.frame(V1=1:100, V2=sample(1:10, 100, replace=TRUE))
+filtered_peaks <- filter_peaks_raw(peaks, histo)
+print(filtered_peaks)
+
+}

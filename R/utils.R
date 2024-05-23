@@ -24,19 +24,19 @@ initialize_start_time <- function() {
 #' @return A numeric value representing the minimized error.
 #'
 #' @examples
-#' \dontrun{
+#'
 #' tooptimize <- c(1, 1, 1, 1)
 #' x <- rnorm(100)
 #' end <- 100
 #' xfit <- seq(min(x), max(x), length=end)
-#' xfit_left <- 20
-#' xfit_right <- 80
+#' xfit_left <- min(x)
+#' xfit_right <- max(x)
 #' d <- data.frame(V1=1:100, V2=rnorm(100))
 #' min_valid_pos <- 10
 #' itr <- 100
 #' error <- error_minimize(tooptimize, x, end, xfit, xfit_left, xfit_right, d, min_valid_pos, itr)
 #' print(error)
-#' }
+#'
 #' @export
 error_minimize<-function(tooptimize, x, end, xfit, xfit_left, xfit_right, d, min_valid_pos, itr)
 {
@@ -81,14 +81,14 @@ error_minimize<-function(tooptimize, x, end, xfit, xfit_left, xfit_right, d, min
 #' @param h_target A numeric vector representing the target k-mer frequency.
 #' @return A numeric value representing the minimized difference.
 #' @examples
-#' \dontrun{
+#'
 #' tooptimize <- c(0.5)
 #' h_het <- rnorm(100)
 #' h_hom <- rnorm(100)
 #' h_target <- rnorm(100)
 #' diff <- error_minimize2(tooptimize, h_het, h_hom, h_target)
 #' print(diff)
-#' }
+#'
 #' @export
 error_minimize2<-function(tooptimize, h_het, h_hom, h_target)
 {
@@ -119,7 +119,7 @@ error_minimize2<-function(tooptimize, h_het, h_hom, h_target)
 #' @param sdfit A numeric value representing the initial standard deviation.
 #' @return A numeric value representing the minimized error.
 #' @examples
-#' \dontrun{
+#'
 #' tooptimize <- c(1, 1, 1, 1)
 #' x <- rnorm(100)
 #' end <- 100
@@ -131,10 +131,10 @@ error_minimize2<-function(tooptimize, h_het, h_hom, h_target)
 #' itr <- 100
 #' meanfit <- 18
 #' sdfit <- 4.21
-#' error <- error_minimize3(tooptimize, x, end, xfit, xfit_left, xfit_right, d,
+#' error <- error_minimize3(tooptimize, x, end, xfit_left, xfit_right, d,
 #' min_valid_pos, itr, meanfit, sdfit)
 #' print(error)
-#' }
+#'
 #' @export
 error_minimize3<-function(tooptimize, x, end, xfit_left, xfit_right, d, min_valid_pos, itr, meanfit, sdfit)
 {
@@ -235,7 +235,7 @@ kmer_count_modify <- function(start, end, left_right, histx)
 #' @param scale_flag A logical value indicating whether to apply scaling (default is FALSE).
 #' @return A list containing the estimated genome size and other fitting parameters.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' histo <- "sample1.histo"
 #' sizek <- 21
@@ -1384,6 +1384,11 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
 #' @param peaks A data frame containing the peaks from the histogram.
 #' @param histo A data frame representing the k-mer histogram.
 #' @return A data frame with filtered peaks.
+#' @examples
+#' peaks <- data.frame(V1=1:20, V2=sample(1:10, 20, replace=TRUE))
+#' histo <- data.frame(V1=1:100, V2=sample(1:10, 100, replace=TRUE))
+#' filtered_peaks <- filter_peaks(peaks, histo)
+#' print(filtered_peaks)
 #' @export
 filter_peaks <- function(peaks, histo)
 {
@@ -1458,10 +1463,12 @@ filter_peaks <- function(peaks, histo)
 #' @param histo_data A data frame representing the k-mer histogram.
 #' @return A data frame with filtered peaks.
 #' @examples
-#' \dontrun{
-#' histo_data <- data.frame(V1 = 1:100, V2 = c(rep(0, 20), rnorm(60, 100, 10), rep(0, 20)))
+#'
+#' x <- seq(-10, 10, length.out = 100)
+#' y <- dnorm(x)
+#' histo_data <- data.frame(V1 = 1:100, V2 = y * 10)
 #' get_het_pos(histo_data)
-#' }
+#'
 #' @export
 get_het_pos <- function(histo_data){
   data <- histo_data

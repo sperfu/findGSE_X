@@ -38,3 +38,19 @@ A numeric value representing the minimized error.
 \description{
 This function minimizes the error for the raw remaining k-mer frequency by adjusting the scaling factor.
 }
+\examples{
+tooptimize <- c(1, 1, 1, 1)
+x <- rnorm(100)
+end <- 100
+xfit <- seq(min(x), max(x), length=end)
+xfit_left <- min(x) + 1
+xfit_right <- max(x) - 1
+d <- data.frame(V1=1:100, V2=rnorm(100))
+min_valid_pos <- 10
+itr <- 100
+
+error <- error_minimize3_raw(tooptimize, x, end, xfit_left, xfit_right, d,
+min_valid_pos, itr)
+print(error)
+
+}

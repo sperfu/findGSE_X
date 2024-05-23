@@ -23,3 +23,14 @@ A list containing the estimated genome size and other fitting parameters.
 \description{
 This function estimates the genome size of a species using raw k-mer frequencies.
 }
+\examples{
+\donttest{
+
+histo <- "sample1.histo"
+sizek <- 21
+outdir <- ""
+exp_hom <- 200
+species <- ""
+fit_lists <- findGSE_raw(histo, sizek,output_dir, exp_hom, species)
+}
+}
