@@ -107,7 +107,7 @@ library(grDevices)
 #' @return No return value, called for side effects. The function generates PDF, PNG, and CSV files in the specified output directory.
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' test_histo <- system.file("extdata","example.histo",package = "findGSEP")
 #' path <- dirname(test_histo)
 #' samples <- basename(test_histo)

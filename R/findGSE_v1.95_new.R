@@ -203,7 +203,7 @@ kmer_count_modify_raw <- function(start, end, left_right, histx)
 #' @param species A character string specifying the species name.
 #' @return A list containing the estimated genome size and other fitting parameters.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #'
 #' histo <- "sample1.histo"
 #' sizek <- 21

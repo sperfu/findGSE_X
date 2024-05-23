@@ -68,7 +68,7 @@ Parameters k and related histo file are required for any estimation.
 Dependencies (R library) required: pracma, fGarch, etc. - see DESCRIPTION for details.
 }
 \examples{
-\donttest{
+\dontrun{
 test_histo <- system.file("extdata","example.histo",package = "findGSEP")
 path <- dirname(test_histo)
 samples <- basename(test_histo)

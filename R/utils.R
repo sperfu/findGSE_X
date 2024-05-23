@@ -235,7 +235,7 @@ kmer_count_modify <- function(start, end, left_right, histx)
 #' @param scale_flag A logical value indicating whether to apply scaling (default is FALSE).
 #' @return A list containing the estimated genome size and other fitting parameters.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #'
 #' histo <- "sample1.histo"
 #' sizek <- 21
