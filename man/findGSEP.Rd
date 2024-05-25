@@ -48,8 +48,7 @@ normally do not need to change this. (optional).}
 normally do not need to change this. (optional).}
 
 \item{output_dir}{is the path to write output files (optional).
-If not provided, by default results will be written in the folder
-where the histo file is.}
+If not specify, will use tempdir() as output directory.}
 }
 \value{
 No return value, called for side effects. The function generates PDF, PNG, and CSV files in the specified output directory.
@@ -79,7 +78,7 @@ range_left <- exp_hom*0.2
 range_right <- exp_hom*0.2
 xlimit <- -1
 ylimit <- -1
-output_dir <- ""
+output_dir <- tempdir()
 
 findGSEP(path, samples, sizek, exp_hom, ploidy, range_left, range_right, xlimit, ylimit, output_dir)
 }

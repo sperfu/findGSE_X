@@ -147,7 +147,8 @@ findGSEP <- function(path, samples, sizek, exp_hom, ploidy, range_left, range_ri
   if(missing(sizek)) sizek <- 21
 
   #message(range_left,'\n')
-  if(missing(output_dir))   output_dir  <- getwd()
+  #if(missing(output_dir))   output_dir  <- getwd()
+  if(missing(output_dir))   output_dir  <- tempdir()
 
   if(missing(samples))
   {

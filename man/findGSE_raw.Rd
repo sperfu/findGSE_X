@@ -11,7 +11,7 @@ findGSE_raw(histo = "", sizek = 0, outdir = "", exp_hom = 0, species = "")
 
 \item{sizek}{An integer indicating the size of k used to generate the histogram.}
 
-\item{outdir}{A character string specifying the output directory.}
+\item{outdir}{A character string specifying the output directory. If not specify, will use tempdir() as output directory.}
 
 \item{exp_hom}{A numeric value representing the expected average k-mer coverage for the homozygous regions.}
 
@@ -28,7 +28,7 @@ This function estimates the genome size of a species using raw k-mer frequencies
 
 histo <- "sample1.histo"
 sizek <- 21
-outdir <- ""
+outdir <- tempdir()
 exp_hom <- 200
 species <- ""
 fit_lists <- findGSE_raw(histo, sizek,output_dir, exp_hom, species)
