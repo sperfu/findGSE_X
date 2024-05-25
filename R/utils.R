@@ -224,7 +224,7 @@ kmer_count_modify <- function(start, end, left_right, histx)
 #'
 #' @param histo A character string specifying the path to the histogram file.
 #' @param sizek An integer indicating the size of k used to generate the histogram.
-#' @param outdir A character string specifying the output directory.
+#' @param outdir A character string specifying the output directory. If not specify, will use tempdir() as output directory.
 #' @param exp_hom A numeric value representing the expected average k-mer coverage for the homozygous regions.
 #' @param species A character string specifying the species name.
 #' @param ploidy_ind An integer indicating the ploidy index (default is 2).
@@ -239,7 +239,7 @@ kmer_count_modify <- function(start, end, left_right, histx)
 #'
 #' histo <- "sample1.histo"
 #' sizek <- 21
-#' outdir <- ""
+#' outdir <- tempdir()
 #' exp_hom <- 200
 #' species <- ""
 #' ploidy_ind <- 2
@@ -268,7 +268,8 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
   # defaults
   message('ploidy index start: ',ploidy_ind,'\n')
   if(missing(exp_hom))  exp_hom <- 0
-  if(missing(outdir))   outdir  <- getwd()
+  #if(missing(outdir))   outdir  <- getwd()
+  if(missing(outdir))   outdir  <- tempdir()
   ######################################## libararies required ###############################################
   #message("\n special version: \n")
   # find all peaks in a time series
@@ -311,7 +312,8 @@ findGSE_sp <- function(histo="", sizek=0, outdir="", exp_hom=0, species="",ploid
   path            <- outdir
   if(path==".")
   {
-    path <- getwd()
+    #path <- getwd()
+    path <- tempdir()
   }else
     if(path == "")
     {

@@ -198,7 +198,7 @@ kmer_count_modify_raw <- function(start, end, left_right, histx)
 #'
 #' @param histo A character string specifying the path to the histogram file.
 #' @param sizek An integer indicating the size of k used to generate the histogram.
-#' @param outdir A character string specifying the output directory.
+#' @param outdir A character string specifying the output directory. If not specify, will use tempdir() as output directory.
 #' @param exp_hom A numeric value representing the expected average k-mer coverage for the homozygous regions.
 #' @param species A character string specifying the species name.
 #' @return A list containing the estimated genome size and other fitting parameters.
@@ -207,7 +207,7 @@ kmer_count_modify_raw <- function(start, end, left_right, histx)
 #'
 #' histo <- "sample1.histo"
 #' sizek <- 21
-#' outdir <- ""
+#' outdir <- tempdir()
 #' exp_hom <- 200
 #' species <- ""
 #' fit_lists <- findGSE_raw(histo, sizek,output_dir, exp_hom, species)
@@ -228,7 +228,8 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
   }
   # defaults
   if(missing(exp_hom))  exp_hom <- 0
-  if(missing(outdir))   outdir  <- getwd()
+  #if(missing(outdir))   outdir  <- getwd()
+  if(missing(outdir))   outdir  <- tempdir()
   ######################################## libararies required ###############################################
   # find all peaks in a time series
   # suppressWarnings(suppressMessages(library("pracma")))
@@ -270,7 +271,8 @@ findGSE_raw <- function(histo="", sizek=0, outdir="", exp_hom=0, species="")
   path            <- outdir
   if(path==".")
   {
-    path <- getwd()
+    #path <- getwd()
+    path <- tempdir()
   }else
   if(path == "")
   {
