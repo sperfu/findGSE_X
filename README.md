@@ -7,7 +7,10 @@
 <!-- badges: start -->
   
 [![R-CMD-check](https://github.com/sperfu/findGSEP/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sperfu/findGSEP/actions/workflows/R-CMD-check.yaml)
+[![CRAN checks](https://badges.cranchecks.info/summary/findGSEP.svg)](https://cran.r-project.org/web/checks/check_results_findGSEP.html)
 [![](https://www.r-pkg.org/badges/version/findGSEP?color=orange)](https://cran.r-project.org/package=findGSEP)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/findGSEP?color=blue)](https://cran.r-project.org/package=findGSEP)
+[![License: GPL (>= 2)](https://img.shields.io/badge/license-GPL (>= 2)-blue.svg)](https://cran.r-project.org/web/licenses/GPL (>= 2))
 <!-- badges: end -->
 
 
@@ -67,6 +70,15 @@ We have released our backend-server findGSEP and provide a CPU-based version of 
 
 
 ## Instructions for installing findGSEP package
+
+### Get the released version from CRAN:
+
+``` r
+install.packages("findGSEP")
+```
+
+### Or the development version from github:
+
 
 1. Install `devtools`:
 
