@@ -7,9 +7,7 @@
 <!-- badges: start -->
   
 [![R-CMD-check](https://github.com/sperfu/findGSEP/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sperfu/findGSEP/actions/workflows/R-CMD-check.yaml)
-
 [![](https://www.r-pkg.org/badges/version/findGSEP?color=orange)](https://cran.r-project.org/package=findGSEP)
-
 [![License: GPL2](https://img.shields.io/badge/license-GPL2-blue.svg)](https://cran.r-project.org/web/licenses/GPL2)
 <!-- badges: end -->
 
