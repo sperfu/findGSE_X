@@ -124,6 +124,7 @@ You can check our demo dataset at our [webserver](http://146.56.237.198:3838/fin
 
 ## 2.3 Instructions for running findGSEP:
 
+Taking a precalculated simulated Pentaploid data as an demo, named `your_test_file.histo`. 
 ```R
 # Set options (optional):
 
