@@ -121,7 +121,8 @@ devtools::install_github("sperfu/findGSEP")
 
 You can check our demo dataset at our [webserver](http://146.56.237.198:3838/findGSEP/) or [drive](https://drive.google.com/drive/folders/1fBuPRxi_J-oMpj6G2KokEUeB_8S8ahH6?usp=share_link) for complete data. We have provide precalculated histo file whose ploidy number ranging from tetraploid to octoploid.
 
-### 2.3 Instructions for running findGSEP:
+
+## 2.3 Instructions for running findGSEP:
 
 ```R
 # Set options (optional):
