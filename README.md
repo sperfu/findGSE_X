@@ -28,7 +28,7 @@ Step 2. Run findGSEP.
 
 ## Step 1: Generate histo file using either KMC or Jellyfish tools.
 
-### Instructions for running Jellyfish:
+### 1.1 Instructions for running Jellyfish:
 
 1. **Download and install jellyfish** from: [Jellyfish Release](http://www.genome.umd.edu/jellyfish.html#Release)
 
@@ -51,7 +51,7 @@ Step 2. Run findGSEP.
 4. **Upload `reads.histo` to findGSEP**.
 
 
-### Instructions for running KMC:
+### 1.2 Instructions for running KMC:
 
 1. **Download and install KMC** from: [KMC GitHub](https://github.com/refresh-bio/KMC)
 
@@ -90,7 +90,7 @@ Step 2. Run findGSEP.
 
 ## Step 2: Run findGSEP.
 
-## Instructions for installing and running findGSEP package
+## 2.1 Instructions for installing findGSEP:
 
 ### Get the released version from CRAN:
 
@@ -117,11 +117,12 @@ devtools::install_github("sperfu/findGSEP")
 #### Note: This package was developed using R version 4.2.0. To ensure the stability of the package, it is highly recommended that users install R version 4.2.0.
 
 
-### Data
+## 2.2 Instructions for retrieving Data
 
 You can check our demo dataset at our [webserver](http://146.56.237.198:3838/findGSEP/) or [drive](https://drive.google.com/drive/folders/1fBuPRxi_J-oMpj6G2KokEUeB_8S8ahH6?usp=share_link) for complete data. We have provide precalculated histo file whose ploidy number ranging from tetraploid to octoploid.
 
-### Usage:
+### 2.3 Instructions for running findGSEP:
+
 ```R
 # Set options (optional):
 
@@ -149,7 +150,7 @@ findGSEP(path, samples, sizek, exp_hom, ploidy, range_left, range_right, xlimit,
 
 After running, You will find 'your_file.histo_hap_genome_size_est.pdf' in your output_dir folder, please give it a try!!!
 
-## Parameter settings
+## 2.4 Parameter settings
 
 You can reference to our paramenter setting for those species we used in our [webserver](http://146.56.237.198:3838/findGSEP/) or [demo dataset](https://drive.google.com/drive/folders/1fBuPRxi_J-oMpj6G2KokEUeB_8S8ahH6?usp=share_link).
 
