@@ -18,8 +18,15 @@ Accurate estimating genome size is a crucial task in sequencing projects. Curren
 
 We have released our backend-server findGSEP and provide a CPU-based version of [findGSEP](http://146.56.237.198:3838/findGSEP/) online platform. Please check it out!!!
 
+# Workflow Overview
 
-## Installation & Usage
+The workflow of the whole process consists of two main steps:
+Step 1. Generate histo file using either KMC or Jellyfish tools.
+Step 2. Run findGSEP.
+
+## Next, we will go through these steps one-by-one:
+
+## Step 1: Generate histo file using either KMC or Jellyfish tools.
 
 ### Instructions for running Jellyfish:
 
@@ -44,19 +51,34 @@ We have released our backend-server findGSEP and provide a CPU-based version of 
 4. **Upload `reads.histo` to findGSEP**.
 
 
-### Using KMC:
+### Instructions for running KMC:
 
 1. **Download and install KMC** from: [KMC GitHub](https://github.com/refresh-bio/KMC)
 
 2. **Count kmers using KMC**:
 
     ```sh
-    kmc -k21 -t1 -m5 -ci1 *.fastq reads_kmc tmp
+    kmc -k21 -fa -t50 -m12 -ci1 @input_file_name.lst reads_kmc tmp
     ```
     
-    *Note: Adjust the memory (-m) and threads (-t) parameters according to your server. This example uses 1 thread and 5GB of RAM. The kmer length (-k) may need to be scaled if you have low coverage or a high error rate. The `-ci1` option ensures that kmers with a count of at least 1 are included.*
+    *Note: input_file_name.lst is the file name list with locations. -fa means input file is fasta format data. Adjust the memory (-m) and threads (-t) parameters according to your server. This example uses 50 thread and 12GB of RAM as default. The kmer length (-k) may need to be scaled if you have low coverage or a high error rate. The `-ci1` option ensures that kmers with a count of at least 1 are included.
+   
+   demo usage:
+   
+   ```
+   kmc -k27 -m24 NA19238.fastq NA.res /data/kmc_tmp_dir/
+   kmc -k27 -m24 @files.lst NA.res /data/kmc_tmp_dir/
 
-3. **Export the kmer count histogram**:
+   NA19238 - single file in specified (-f switch) format (gziped or not)
+   
+   @files - file name with list of input files in specified (-f switch) format (gziped or not)
+   
+   ```   
+
+   For details, please refer to [KMC GitHub](https://github.com/refresh-bio/KMC)
+   *
+
+4. **Export the kmer count histogram**:
 
     ```sh
     kmc_tools transform reads_kmc histogram reads_kmc.histo
@@ -64,10 +86,11 @@ We have released our backend-server findGSEP and provide a CPU-based version of 
     
     *Note: This will create the histogram file `reads_kmc.histo`.*
 
-4. **Upload `reads_kmc.histo` to findGSEP**.
+5. **Upload `reads_kmc.histo` to findGSEP or corresponding file location for running**.
 
+## Step 2: Run findGSEP.
 
-## Instructions for installing findGSEP package
+## Instructions for installing and running findGSEP package
 
 ### Get the released version from CRAN:
 
